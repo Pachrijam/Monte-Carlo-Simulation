@@ -3,7 +3,7 @@ import random
 def percent_error(num_samples):
     pi_estimate = monte_carlo_pi(num_samples)
     error = abs(pi_estimate - 3.141592653589793)
-    return (error / 3.141592653589793) * 100
+    return round(error / 3.141592653589793 * 100, 4)
 
 def monte_carlo_pi(num_samples):
     inside_circle = 0
