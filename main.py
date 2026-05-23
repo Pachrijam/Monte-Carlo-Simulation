@@ -1,9 +1,6 @@
 import random
-from calculate import monte_carlo_pi
-from calculate import percent_error
-from visualization import visualizeEstimates
-from visualization import visualizePercentError
-from visualization import visualizeSubplot
+from calculate import monte_carlo_pi, percent_error
+from visualization import visualizeEstimates, visualizePercentError, visualizeSubplot
 
 print("Estimating the value of pi using the Monte Carlo method...\nHow many random samples would you like to use?")
 num_samples = int(input())

@@ -1,7 +1,6 @@
 import math
 import matplotlib.pyplot as plt
-from calculate import monte_carlo_pi
-from calculate import percent_error
+from calculate import monte_carlo_pi, percent_error
 
 def visualizeEstimates(samples):
     xValues = []
@@ -52,6 +51,19 @@ def visualizePercentError(samples):
     plt.style.use('dark_background')
     plt.grid(color='gray', linestyle='-', linewidth=0.5, alpha=0.2)
     plt.plot(xValues, yValues, color='red', linestyle='-', linewidth=2, markersize=3)
+    # Automatically adjust y-axis limits based on the number of samples
+    if(samples >= 100 and samples < 400):
+        plt.ylim(0, 40)
+    elif(samples >= 400 and samples < 600):
+        plt.ylim(0, 30)
+    elif(samples >= 600 and samples < 1000):
+        plt.ylim(0, 20)
+    elif(samples >= 1000 and samples < 10000):
+        plt.ylim(0, 10)
+    elif(samples >= 10000 and samples < 100000):
+        plt.ylim(0, 5)
+    else:        
+        plt.ylim(0, 100)
     plt.xlim(0, samples)
     plt.xlabel('Number of Samples', fontsize=14)
     plt.ylabel('Percent Error (%)', fontsize=14)
@@ -96,6 +108,16 @@ def visualizeSubplot(samples):
     ax1.grid(color='gray', linestyle='-', linewidth=0.5, alpha=0.2)
 
     ax2.plot(xValues, errorValues, color='red', linestyle='-', linewidth=2, markersize=3)
+    if(samples >= 100 and samples < 400):
+        ax2.set_ylim(0, 40)
+    elif(samples >= 400 and samples < 600):
+        ax2.set_ylim(0, 30)
+    elif(samples >= 600 and samples < 1000):
+        ax2.set_ylim(0, 20)
+    elif(samples >= 1000 and samples < 10000):
+        ax2.set_ylim(0, 10)
+    elif(samples >= 10000 and samples < 100000):
+        ax2.set_ylim(0, 5)
     ax2.set_xlim(0, samples)
     ax2.set_xlabel('Number of Samples', fontsize=14)
     ax2.set_ylabel('Percent Error (%)', fontsize=14)
