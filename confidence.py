@@ -21,6 +21,7 @@ def confidence_interval(estimates, confidence=0.95):
     upper = mean + margin_of_error
 
     return {
+        "confidence_level": confidence,
         "mean": mean,
         "lower": lower,
         "upper": upper,
