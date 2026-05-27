@@ -64,47 +64,6 @@ def visualizePercentError(samples):
     plt.title('Percent Error of Monte Carlo Estimation of Pi', fontsize=14, fontweight='bold')
     plt.show()
 
-def visualizeConfidenceIntervals(ci_results):
-    ci_results = sorted(ci_results, key=lambda x: x["confidence_level"])
-    confidences = [int(ci["confidence_level"] * 100) for ci in ci_results]
-    means = [ci["mean"] for ci in ci_results]
-    errors = [ci["margin_of_error"] for ci in ci_results]
-    colors = ['red', 'green', 'blue']
-    
-    plt.figure()
-    plt.style.use('dark_background')
-    plt.grid(color='gray', linestyle='-', linewidth=0.5, alpha=0.2)
-    
-    for i, ci in enumerate(ci_results):
-        x = int(ci["confidence_level"] * 100)
-        y = ci["mean"]
-        error = ci["margin_of_error"]
-        
-        plt.errorbar(
-            x, y, yerr=error, fmt='o', color=colors[i], label=f'{x}% CI', capsize=5
-        )
-
-        plt.text(x, y + error + 0.01, f'{y:.4f}', ha='center', va='bottom', color=colors[i], fontsize=10)
-    
-    plt.axhline(y=math.pi, color='blue', linestyle='--', label='Actual value of Pi')
-    
-    all_values = []
-    for ci in ci_results:
-        all_values.extend([ci["lower"], ci["upper"]])
-
-    plt.ylim(min(all_values) - 0.05, max(all_values) + 0.05)
-    plt.xlabel('Confidence Level (%)', fontsize=14)
-    plt.ylabel('Estimated Value of Pi', fontsize=14)
-    plt.title('Confidence Intervals for Pi Estimates', fontsize=14, fontweight='bold')
-    plt.legend()
-
-    plt.figtext(
-        0.5, -0.05, 'Higher confidence levels result in wider intervals, indicating more uncertainty in the estimate.',
-        ha='center', va='top', fontsize=12, style='italic'
-    )
-
-    plt.show()
-
 def visualizeSubplot(samples):
     xValues, yValues, errorValues = generatePiData(samples)
     plt.style.use('dark_background')
