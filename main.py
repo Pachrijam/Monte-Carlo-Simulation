@@ -1,4 +1,5 @@
 import random
+import math
 from calculate import monte_carlo_pi, percent_error
 from visualization import visualizeEstimates, visualizePercentError, visualizeSubplot
 from confidence import confidence_interval
@@ -6,8 +7,25 @@ from integration import monte_carlo_integration
 
 print("Estimating using the Monte Carlo method...")
 print("Would you like to estimate the integral of a function using Monte Carlo integration? (yes/no)")
-integrate_choice = input().strip().lower()
+integrate_choice = input().lower()
 if integrate_choice in ['yes', 'y']:
+    integrand_functions = {
+        '1': ("x^2", lambda x: x ** 2),
+        '2': ("sin(x)", math.sin),
+        '3': ("exp(-x^2)", lambda x: math.exp(-x ** 2)),
+        '4': ("1 / (1 + x^2)", lambda x: 1 / (1 + x ** 2)),
+        '5': ("cos(x)", math.cos),
+        '6': ("log(abs(x) + 1)", lambda x: math.log(abs(x) + 1)),
+    }
+    print("Choose a function to integrate:")
+    for key, (name, _) in integrand_functions.items():
+        print(f"{key}. {name}")
+    print("Enter the number of the function:")
+    function_choice = input()
+    while function_choice not in integrand_functions:
+        print("Please enter a valid function number.")
+        function_choice = input()
+    function_name, integrand = integrand_functions[function_choice]
     print("Enter the lower bound of the integral:")
     lower_bound = float(input())
     print("Enter the upper bound of the integral:")
@@ -20,18 +38,16 @@ if integrate_choice in ['yes', 'y']:
     while integration_samples > 10000000 or integration_samples <= 0:
         print("Please enter a number of samples less than or equal to 10,000,000 and greater than 0.")
         integration_samples = int(input())
-    def integrand(x):
-        return x ** 2
     integral_estimate = monte_carlo_integration(integrand, lower_bound, upper_bound, integration_samples)
-    print(f"Estimated integral of x^2 from {lower_bound} to {upper_bound}: {integral_estimate}")
+    print(f"Estimated integral of {function_name} from {lower_bound} to {upper_bound}: {integral_estimate}")
 
 print("------------------------------------------------------\nWould you like to estimate π using the Monte Carlo method? (yes/no)")
-pi_choice = input().strip().lower()
+pi_choice = input().lower()
 if pi_choice not in ['yes', 'y']:
     print("------------------------------------------------------\nExiting the program. Thank you!")
     exit()
 
-print("------------------------------------------------------\nHow many random samples would you like to use to estimate π?")
+print("How many random samples would you like to use to estimate π?")
 num_samples = int(input())
 
 while num_samples > 10000000 or num_samples <= 0:
