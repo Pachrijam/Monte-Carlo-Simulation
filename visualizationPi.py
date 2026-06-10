@@ -20,7 +20,6 @@ def visualizePiEstimates(samples):
     plt.grid(color='gray', linestyle='-', linewidth=0.5, alpha=0.2)
     plt.plot(xValues, yValues, color='red', linestyle='-', linewidth=2, markersize=3)
     plt.axhline(y=math.pi, color='blue', linestyle='--', label='Actual value of Pi')
-    # Automatically adjust y-axis limits based on the number of samples
     if(samples >= 50 and samples < 100):
         plt.ylim(2.5, 3.5)
     elif(samples >= 100 and samples < 1000):
@@ -45,7 +44,6 @@ def visualizePiPercentError(samples):
     plt.style.use('dark_background')
     plt.grid(color='gray', linestyle='-', linewidth=0.5, alpha=0.2)
     plt.plot(xValues, yValues, color='red', linestyle='-', linewidth=2, markersize=3)
-    # Automatically adjust y-axis limits based on the number of samples
     if(samples >= 100 and samples < 400):
         plt.ylim(0, 40)
     elif(samples >= 400 and samples < 600):

@@ -4,6 +4,7 @@ from calculatePi import monte_carlo_pi, percent_error
 from visualizationPi import visualizePiEstimates, visualizePiPercentError, visualizePiSubplot
 from confidence import confidence_interval
 from calculateInt import monte_carlo_integration
+from visualizationInt import visualizeIntEstimates, visualizeIntPercentError, visualizeIntSubplot
 
 print("Estimating using the Monte Carlo method...")
 print("Would you like to estimate the integral of a function using Monte Carlo integration? (yes/no)")
@@ -39,9 +40,23 @@ if integrate_choice in ['yes', 'y']:
         print("Please enter a number of samples less than or equal to 10,000,000 and greater than 0.")
         integration_samples = int(input())
     integral_estimate = monte_carlo_integration(integrand, lower_bound, upper_bound, integration_samples)
-    print(f"Estimated integral of {function_name} from {lower_bound} to {upper_bound}: {integral_estimate}")
+    print(f"------------------------------------------------------\nEstimated integral of {function_name} from {lower_bound} to {upper_bound}: {integral_estimate}")
 
-print("Would you like to estimate π using the Monte Carlo method? (yes/no)")
+    print("------------------------------------------------------\nWould you like a visualization of the integral estimates, error, or a combined subplot? (Enter 'estimates', 'error', or 'subplot')")
+    int_vis_choice = input().lower()
+    while int_vis_choice not in ['estimates', 'error', 'subplot', 'no', 'n']:
+        print("Please enter 'estimates', 'error', 'subplot' or 'no'.")
+        int_vis_choice = input().lower()
+
+    if int_vis_choice in ['estimates', 'error', 'subplot']:
+        if int_vis_choice == 'estimates':
+            visualizeIntEstimates(integration_samples, integrand, lower_bound, upper_bound)
+        elif int_vis_choice == 'error':
+            visualizeIntPercentError(integration_samples, integrand, lower_bound, upper_bound)
+        elif int_vis_choice == 'subplot':
+            visualizeIntSubplot(integration_samples, integrand, lower_bound, upper_bound)
+
+print("------------------------------------------------------\nWould you like to estimate π using the Monte Carlo method? (yes/no)")
 pi_choice = input().lower()
 if pi_choice not in ['yes', 'y']:
     print("------------------------------------------------------\nExiting the program. Thank you!")

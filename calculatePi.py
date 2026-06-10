@@ -57,21 +57,18 @@ def percent_error(num_samples, mode = "normal", processes=None):
 def benchmark(num_samples, processes=None):
     print(f"\nRunning benchmark with {num_samples:,} samples...\n")
 
-    # Normal
     start = time.time()
     pi_normal = monte_carlo_pi(num_samples)
     t1 = time.time() - start
     print(f"Normal π ≈ {pi_normal}")
     print(f"Time: {t1:.4f} sec\n")
 
-    # NumPy
     start = time.time()
     pi_numpy = monte_carlo_pi_numpy(num_samples)
     t2 = time.time() - start
     print(f"NumPy π ≈ {pi_numpy}")
     print(f"Time: {t2:.4f} sec\n")
 
-    # Parallel NumPy
     start = time.time()
     pi_parallel = parallel_monte_carlo_pi(num_samples, processes)
     t3 = time.time() - start
@@ -87,9 +84,7 @@ def benchmark(num_samples, processes=None):
 if __name__ == "__main__":
     samples = 1_000_000
 
-    # Run benchmark
     benchmark(samples)
 
-    # Example percent error
     err = percent_error(samples, mode="parallel", processes=4)
     print(f"\nPercent Error: {err}%")
