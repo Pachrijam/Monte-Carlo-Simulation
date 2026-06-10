@@ -1,9 +1,9 @@
 import random
 import math
-from calculate import monte_carlo_pi, percent_error
-from visualization import visualizeEstimates, visualizePercentError, visualizeSubplot
+from calculatePi import monte_carlo_pi, percent_error
+from visualizationPi import visualizePiEstimates, visualizePiPercentError, visualizePiSubplot
 from confidence import confidence_interval
-from integration import monte_carlo_integration
+from calculateInt import monte_carlo_integration
 
 print("Estimating using the Monte Carlo method...")
 print("Would you like to estimate the integral of a function using Monte Carlo integration? (yes/no)")
@@ -41,7 +41,7 @@ if integrate_choice in ['yes', 'y']:
     integral_estimate = monte_carlo_integration(integrand, lower_bound, upper_bound, integration_samples)
     print(f"Estimated integral of {function_name} from {lower_bound} to {upper_bound}: {integral_estimate}")
 
-print("------------------------------------------------------\nWould you like to estimate π using the Monte Carlo method? (yes/no)")
+print("Would you like to estimate π using the Monte Carlo method? (yes/no)")
 pi_choice = input().lower()
 if pi_choice not in ['yes', 'y']:
     print("------------------------------------------------------\nExiting the program. Thank you!")
@@ -75,8 +75,8 @@ while visualization_choice not in ['estimates', 'error', 'subplot']:
     visualization_choice = input().lower()
 
 if visualization_choice == 'estimates':
-    visualizeEstimates(num_samples)
+    visualizePiEstimates(num_samples)
 elif visualization_choice == 'error':
-    visualizePercentError(num_samples)
+    visualizePiPercentError(num_samples)
 elif visualization_choice == 'subplot':
-    visualizeSubplot(num_samples)
+    visualizePiSubplot(num_samples)

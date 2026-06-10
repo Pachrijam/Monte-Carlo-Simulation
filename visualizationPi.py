@@ -14,7 +14,7 @@ def generatePiData(samples):
     errors = np.abs(pi_estimates - math.pi) / math.pi * 100
     return n, pi_estimates, errors
 
-def visualizeEstimates(samples):
+def visualizePiEstimates(samples):
     xValues, yValues, _ = generatePiData(samples)
     plt.style.use('dark_background')
     plt.grid(color='gray', linestyle='-', linewidth=0.5, alpha=0.2)
@@ -40,7 +40,7 @@ def visualizeEstimates(samples):
     plt.legend()
     plt.show()
 
-def visualizePercentError(samples):
+def visualizePiPercentError(samples):
     xValues, _, yValues = generatePiData(samples)
     plt.style.use('dark_background')
     plt.grid(color='gray', linestyle='-', linewidth=0.5, alpha=0.2)
@@ -64,7 +64,7 @@ def visualizePercentError(samples):
     plt.title('Percent Error of Monte Carlo Estimation of Pi', fontsize=14, fontweight='bold')
     plt.show()
 
-def visualizeSubplot(samples):
+def visualizePiSubplot(samples):
     xValues, yValues, errorValues = generatePiData(samples)
     plt.style.use('dark_background')
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8), sharex=True)
