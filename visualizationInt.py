@@ -2,6 +2,13 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
+
+def trapz(y, x):
+    """Simple trapezoidal integration fallback if numpy.trapz is unavailable."""
+    dx = np.diff(x)
+    return np.sum((y[:-1] + y[1:]) * dx / 2)
+
+
 def generateIntData(samples, func, a, b, reference_grid=100000):
 	x = np.random.rand(samples)
 	x = a + (b - a) * x
@@ -23,7 +30,7 @@ def generateIntData(samples, func, a, b, reference_grid=100000):
 	except Exception:
 		ref_fx = np.array([func(xi) for xi in ref_x], dtype=float)
 
-	ref_integral = np.trapz(ref_fx, ref_x)
+	ref_integral = trapz(ref_fx, ref_x)
 
 	if abs(ref_integral) < 1e-12:
 		errors = np.abs(integral_estimates - ref_integral) * 100
@@ -36,47 +43,43 @@ def generateIntData(samples, func, a, b, reference_grid=100000):
 def visualizeIntEstimates(samples, func, a, b):
 	xValues, yValues, _, ref_integral = generateIntData(samples, func, a, b)
 	plt.style.use('dark_background')
+	plt.figure(figsize=(10, 6))
 	plt.grid(color='gray', linestyle='-', linewidth=0.5, alpha=0.2)
 	plt.plot(xValues, yValues, color='red', linestyle='-', linewidth=2, markersize=3)
 	plt.axhline(y=ref_integral, color='blue', linestyle='--', label='Reference integral')
 
-	# Automatic y-limits heuristic (based on interval and samples)
-	span = abs(b - a)
-	if samples < 50:
-		plt.ylim(ref_integral - span * 1.5, ref_integral + span * 1.5)
-	elif samples < 1000:
-		plt.ylim(ref_integral - span * 1.0, ref_integral + span * 1.0)
-	else:
-		plt.ylim(ref_integral - span * 0.3, ref_integral + span * 0.3)
+	y_min = min(np.min(yValues), ref_integral)
+	y_max = max(np.max(yValues), ref_integral)
+	y_span = y_max - y_min
+	if y_span <= 0:
+		y_span = max(abs(ref_integral), 1.0)
+	margin = max(y_span * 0.1, 0.1)
+	plt.ylim(y_min - margin, y_max + margin)
 
 	plt.xlim(0, samples)
 	plt.xlabel('Number of Samples', fontsize=14)
 	plt.ylabel('Estimated Integral', fontsize=14)
 	plt.title('Monte Carlo Estimation of an Integral', fontsize=14, fontweight='bold')
 	plt.legend()
+	plt.tight_layout()
 	plt.show()
 
 
 def visualizeIntPercentError(samples, func, a, b):
 	xValues, _, yValues, _ = generateIntData(samples, func, a, b)
 	plt.style.use('dark_background')
+	plt.figure(figsize=(10, 6))
 	plt.grid(color='gray', linestyle='-', linewidth=0.5, alpha=0.2)
 	plt.plot(xValues, yValues, color='red', linestyle='-', linewidth=2, markersize=3)
 
-	# Adaptive y-limits for percent error
-	if samples < 100:
-		plt.ylim(0, max(10, np.nanpercentile(yValues, 95)))
-	elif samples < 1000:
-		plt.ylim(0, max(5, np.nanpercentile(yValues, 95)))
-	elif samples < 10000:
-		plt.ylim(0, max(1, np.nanpercentile(yValues, 95)))
-	else:
-		plt.ylim(0, max(0.5, np.nanpercentile(yValues, 95)))
+	top_value = max(np.nanmax(yValues), np.nanpercentile(yValues, 95), 1.0)
+	plt.ylim(0, top_value * 1.1)
 
 	plt.xlim(0, samples)
 	plt.xlabel('Number of Samples', fontsize=14)
 	plt.ylabel('Percent Error (%)', fontsize=14)
 	plt.title('Percent Error of Monte Carlo Integral Estimate', fontsize=14, fontweight='bold')
+	plt.tight_layout()
 	plt.show()
 
 
@@ -87,13 +90,13 @@ def visualizeIntSubplot(samples, func, a, b):
 
 	ax1.plot(xValues, yValues, color='red', linestyle='-', linewidth=2, markersize=3)
 	ax1.axhline(y=ref_integral, color='blue', linestyle='--', label='Reference integral')
-	span = abs(b - a)
-	if samples < 50:
-		ax1.set_ylim(ref_integral - span * 1.5, ref_integral + span * 1.5)
-	elif samples < 1000:
-		ax1.set_ylim(ref_integral - span * 1.0, ref_integral + span * 1.0)
-	else:
-		ax1.set_ylim(ref_integral - span * 0.3, ref_integral + span * 0.3)
+	y_min = min(np.min(yValues), ref_integral)
+	y_max = max(np.max(yValues), ref_integral)
+	y_span = y_max - y_min
+	if y_span <= 0:
+		y_span = max(abs(ref_integral), 1.0)
+	margin = max(y_span * 0.1, 0.1)
+	ax1.set_ylim(y_min - margin, y_max + margin)
 	ax1.set_xlim(0, samples)
 	ax1.set_xlabel('Number of Samples', fontsize=14)
 	ax1.set_ylabel('Estimated Integral', fontsize=14)
@@ -102,12 +105,8 @@ def visualizeIntSubplot(samples, func, a, b):
 	ax1.grid(color='gray', linestyle='-', linewidth=0.5, alpha=0.2)
 
 	ax2.plot(xValues, errorValues, color='red', linestyle='-', linewidth=2, markersize=3)
-	if samples < 100:
-		ax2.set_ylim(0, max(10, np.nanpercentile(errorValues, 95)))
-	elif samples < 1000:
-		ax2.set_ylim(0, max(5, np.nanpercentile(errorValues, 95)))
-	else:
-		ax2.set_ylim(0, max(1, np.nanpercentile(errorValues, 95)))
+	top_value = max(np.nanmax(errorValues), np.nanpercentile(errorValues, 95), 1.0)
+	ax2.set_ylim(0, top_value * 1.1)
 	ax2.set_xlim(0, samples)
 	ax2.set_xlabel('Number of Samples', fontsize=14)
 	ax2.set_ylabel('Percent Error (%)', fontsize=14)

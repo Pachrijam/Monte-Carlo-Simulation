@@ -31,7 +31,7 @@ if integrate_choice in ['yes', 'y']:
     lower_bound = float(input())
     print("Enter the upper bound of the integral:")
     upper_bound = float(input())
-    while upper_bound <= lower_bound:
+    while float(upper_bound) <= float(lower_bound):
         print("Upper bound must be greater than lower bound. Enter the upper bound:")
         upper_bound = float(input())
     print("Enter the number of samples for the integral estimate:")
