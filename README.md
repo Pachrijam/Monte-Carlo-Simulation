@@ -54,9 +54,3 @@ For more information on Monte Carlo methods, consider exploring:
 - Monte Carlo integration techniques
 - Probability and statistics concepts
 - Numerical methods in Python
-
----
-
-**Created:** June 2026  
-**Language:** Python  
-**Status:** Actively Maintained
