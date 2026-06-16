@@ -5,6 +5,7 @@ from visualizationPi import visualizePiEstimates, visualizePiPercentError, visua
 from confidence import confidence_interval
 from calculateInt import monte_carlo_integration
 from visualizationInt import visualizeIntEstimates, visualizeIntPercentError, visualizeIntSubplot
+from export import export_pi_results, export_integration_results
 
 print("Estimating using the Monte Carlo method...")
 print("Would you like to estimate the integral of a function using Monte Carlo integration? (yes/no)")
@@ -42,6 +43,11 @@ if integrate_choice in ['yes', 'y']:
     integral_estimate = monte_carlo_integration(integrand, lower_bound, upper_bound, integration_samples)
     print(f"------------------------------------------------------\nEstimated integral of {function_name} from {lower_bound} to {upper_bound}: {integral_estimate}")
 
+    print("------------------------------------------------------\nWould you like to export the integration results? (yes/no)")
+    export_int_choice = input().lower()
+    if export_int_choice in ['yes', 'y']:
+        export_integration_results(function_name, lower_bound, upper_bound, integration_samples, integral_estimate)
+
     print("------------------------------------------------------\nWould you like a visualization of the integral estimates, error, or a combined subplot? (Enter 'estimates', 'error', or 'subplot')")
     int_vis_choice = input().lower()
     while int_vis_choice not in ['estimates', 'error', 'subplot', 'no', 'n']:
@@ -75,13 +81,20 @@ error_percentage = percent_error(num_samples)
 runs = 50
 samples_per_run = 100000
 estimates = [monte_carlo_pi(samples_per_run) for _ in range(runs)]
+confidence_intervals = []
 for conf in [0.90, 0.95, 0.99]:
     ci = confidence_interval(estimates, confidence=conf)
+    confidence_intervals.append(ci)
     print(f"------------------------------------------------------\n{int(conf*100)}% Confidence Interval:")
     print(f"Mean: {ci['mean']}")
     print(f"Range: ({ci['lower']}, {ci['upper']})")
 
 print(f"------------------------------------------------------\nEstimated value of π: {monte_carlo_result}\nPercent error: {error_percentage}%")
+
+print("------------------------------------------------------\nWould you like to export the Pi estimation results? (yes/no)")
+export_pi_choice = input().lower()
+if export_pi_choice in ['yes', 'y']:
+    export_pi_results(num_samples, monte_carlo_result, error_percentage, confidence_intervals)
 print("------------------------------------------------------\nWould you like a visualization of the estimates, error, or a combined subplot? (Enter 'estimates', 'error', or 'subplot')")
 
 visualization_choice = input().lower()
