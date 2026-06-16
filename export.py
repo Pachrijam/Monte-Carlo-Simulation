@@ -18,11 +18,11 @@ def export_pi_results(num_samples, pi_estimate, error_percentage, confidence_dat
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"pi_results_{timestamp}"
     
-    # Create results directory if it doesn't exist
+    
     results_dir = Path("results")
     results_dir.mkdir(exist_ok=True)
     
-    # Export to JSON
+    
     json_data = {
         "timestamp": datetime.now().isoformat(),
         "method": "Monte Carlo Pi Estimation",
@@ -37,7 +37,7 @@ def export_pi_results(num_samples, pi_estimate, error_percentage, confidence_dat
         json.dump(json_data, f, indent=2)
     print(f"Results exported to {json_file}")
     
-    # Export to CSV
+    
     csv_file = results_dir / f"{filename}.csv"
     with open(csv_file, 'w', newline='') as f:
         writer = csv.writer(f)
@@ -76,11 +76,11 @@ def export_integration_results(function_name, lower_bound, upper_bound, num_samp
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"integration_results_{timestamp}"
     
-    # Create results directory if it doesn't exist
+    
     results_dir = Path("results")
     results_dir.mkdir(exist_ok=True)
     
-    # Export to JSON
+    
     json_data = {
         "timestamp": datetime.now().isoformat(),
         "method": "Monte Carlo Integration",
@@ -96,7 +96,7 @@ def export_integration_results(function_name, lower_bound, upper_bound, num_samp
         json.dump(json_data, f, indent=2)
     print(f"Results exported to {json_file}")
     
-    # Export to CSV
+    
     csv_file = results_dir / f"{filename}.csv"
     with open(csv_file, 'w', newline='') as f:
         writer = csv.writer(f)
