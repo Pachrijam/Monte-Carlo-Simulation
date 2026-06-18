@@ -4,7 +4,7 @@ A Python practice project exploring Monte Carlo simulation techniques and their 
 
 ## Overview
 
-This repository contains implementations of various Monte Carlo simulations—a statistical method for modeling and analyzing systems with random variables. The project demonstrates the power of using random sampling to solve complex mathematical and computational problems.
+This repository contains implementations of various Monte Carlo simulations—a statistical method for modeling and analyzing systems with random variables. The project demonstrates the power of using statistical sampling to solve complex problems and estimate quantities that are difficult to calculate analytically.
 
 ## Topics
 
@@ -39,6 +39,15 @@ To explore this project:
    ```
 
 3. Run simulation scripts to see Monte Carlo methods in action
+
+## Future Improvements
+
+The following features and enhancements are planned or under development:
+
+- **European Option Pricing via Monte Carlo**: Implementation of risk-neutral Monte Carlo pricing for European calls and puts under the Black–Scholes framework with variance reduction techniques (antithetic variates, control variates)
+  - Validation against closed-form Black–Scholes prices
+  - Comprehensive unit tests and documentation
+  - Educational notebooks demonstrating variance reduction benefits
 
 ## Contributing
 
