@@ -10,6 +10,10 @@ from export import export_pi_results, export_integration_results
 print("Estimating using the Monte Carlo method...")
 print("Would you like to estimate the integral of a function using Monte Carlo integration? (yes/no)")
 integrate_choice = input().lower()
+while integrate_choice not in ['yes', 'y', 'no', 'n']:
+    print("Please enter 'yes' or 'no'.")
+    integrate_choice = input().lower()
+
 if integrate_choice in ['yes', 'y']:
     integrand_functions = {
         '1': ("x^2", lambda x: x ** 2),
@@ -47,7 +51,9 @@ if integrate_choice in ['yes', 'y']:
     export_int_choice = input().lower()
     if export_int_choice in ['yes', 'y']:
         export_integration_results(function_name, lower_bound, upper_bound, integration_samples, integral_estimate)
-
+    while(export_int_choice not in ['yes', 'y', 'no', 'n']):
+        print("Please enter 'yes' or 'no'.")
+        export_int_choice = input().lower()
     print("------------------------------------------------------\nWould you like a visualization of the integral estimates, error, or a combined subplot? (Enter 'estimates', 'error', or 'subplot')")
     int_vis_choice = input().lower()
     while int_vis_choice not in ['estimates', 'error', 'subplot', 'no', 'n']:
@@ -61,6 +67,7 @@ if integrate_choice in ['yes', 'y']:
             visualizeIntPercentError(integration_samples, integrand, lower_bound, upper_bound)
         elif int_vis_choice == 'subplot':
             visualizeIntSubplot(integration_samples, integrand, lower_bound, upper_bound)
+
 
 print("------------------------------------------------------\nWould you like to estimate π using the Monte Carlo method? (yes/no)")
 pi_choice = input().lower()
