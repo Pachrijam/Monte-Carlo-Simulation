@@ -7,8 +7,26 @@ from calculateInt import monte_carlo_integration
 from visualizationInt import visualizeIntEstimates, visualizeIntPercentError, visualizeIntSubplot
 from export import export_pi_results, export_integration_results
 
-print("Estimating using the Monte Carlo method...")
-print("Would you like to estimate the integral of a function using Monte Carlo integration? (yes/no)")
+print("--------------------------------<<MENU>>--------------------------------\nSELECT AN OPTION FROM BELOW:")
+print("""
+1. Estimate the integral of a function using Monte Carlo integration
+2. Estimate the value of π using the Monte Carlo method
+3. Confidence Intervals and Statistical Analysis
+4. Visualizations
+5. Variance Reduction Techniques
+6. Markov Chain Monte Carlo (MCMC) Methods
+7. PDE and SDE Solvers
+8. Sequential Monte Carlo Analysis (particle filters)
+9. Rare event and Tail Risk Simulation
+10. Exit
+"""
+    )
+
+integrate_choice = int(input())
+
+
+### fix the code below to handle new menu selection
+
 integrate_choice = input().lower()
 while integrate_choice not in ['yes', 'y', 'no', 'n']:
     print("Please enter 'yes' or 'no'.")
