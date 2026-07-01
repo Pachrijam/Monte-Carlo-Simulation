@@ -3,17 +3,10 @@ import math
 from calculatePi import monte_carlo_pi, percent_error
 from visualizationPi import visualizePiEstimates, visualizePiPercentError, visualizePiSubplot
 from confidence import confidence_interval
-from calculateInt import monte_carlo_integration
+from calculateInt import monte_carlo_integration as calculate_int
 from visualizationInt import visualizeIntEstimates, visualizeIntPercentError, visualizeIntSubplot
 from export import export_pi_results, export_integration_results
-
-# European options (Black-Scholes Monte Carlo)
-# This import is optional during development if the module is not yet present.
-try:
-    from european_options import monte_carlo_european, black_scholes_price
-    _HAS_EUROPEAN = True
-except Exception:
-    _HAS_EUROPEAN = False
+from european_options import monte_carlo_european, black_scholes_price
 
 
 def get_menu_choice() -> int:
@@ -21,7 +14,7 @@ def get_menu_choice() -> int:
     Display menu and get user's simulation choice.
     
     Returns:
-        int: User's menu selection (1-12)
+        int: User's menu selection (1-11)
     """
     print("--------------------------------<<MENU>>--------------------------------\nSELECT AN OPTION FROM BELOW:\n------------------------------------------------------------------------")
     print("""1. Estimate the integral of a function using Monte Carlo integration
@@ -33,22 +26,16 @@ def get_menu_choice() -> int:
 7. PDE and SDE Solvers
 8. Sequential Monte Carlo Analysis (particle filters)
 9. Rare event and Tail Risk Simulation
-10. (reserved)
-11. European Option Pricing (Black-Scholes Monte Carlo)
-12. Exit
+10. European Option Pricing (Black-Scholes Monte Carlo)
+11. Exit
 ------------------------------------------------------------------------"""
     )
     
-    print("Enter the number of the simulation you would like to run (1-12):") 
-    sim_choice: int = int(input())
+    sim_choice = int(input("Enter the number of the simulation you would like to run (1-11): "))
     return sim_choice
 
 
-def handle_monte_carlo_integration() -> None:
-    """
-    Handle Monte Carlo integration simulation.
-    Prompts user at start and end of method.
-    """
+def monte_carlo_integration() -> None:
     print("You have selected option 1: Estimate the integral of a function using Monte Carlo integration.")
     
     integrand_functions: dict = {
@@ -63,47 +50,37 @@ def handle_monte_carlo_integration() -> None:
     print("------------------------------------------------------------------------\nChoose a function to integrate:")
     for key, (name, _) in integrand_functions.items():
         print(f"{key}. {name}")
-    print("Enter the number of the function:")
-    function_choice: str = input()
+    function_choice = input("Enter the number of the function: ").strip()
+    
     while function_choice not in integrand_functions:
         print("Please enter a valid function number.")
-        function_choice = input()
+        function_choice = input("Enter the number of the function: ").strip()
     
     function_name: str
     integrand: callable
     function_name, integrand = integrand_functions[function_choice]
     
-    print("Enter the lower bound of the integral:")
-    lower_bound: float = float(input())
-    print("Enter the upper bound of the integral:")
-    upper_bound: float = float(input())
-    while float(upper_bound) <= float(lower_bound):
-        print("Upper bound must be greater than lower bound. Enter the upper bound:")
-        upper_bound = float(input())
+    lower_bound = float(input("Enter the lower bound of the integral: "))
+    upper_bound = float(input("Enter the upper bound of the integral: "))
+    while upper_bound <= lower_bound:
+        upper_bound = float(input("Upper bound must be greater than lower bound. Enter the upper bound: "))
     
-    print("Enter the number of samples for the integral estimate:")
-    integration_samples: int = int(input())
+    integration_samples = int(input("Enter the number of samples for the integral estimate: "))
     while integration_samples > 10000000 or integration_samples <= 0:
-        print("Please enter a number of samples less than or equal to 10,000,000 and greater than 0.")
-        integration_samples = int(input())
-    
-    integral_estimate: float = monte_carlo_integration(integrand, lower_bound, upper_bound, integration_samples)
+        integration_samples = int(input("Please enter a number of samples less than or equal to 10,000,000 and greater than 0."))
+        
+    integral_estimate: float = calculate_int(integrand, lower_bound, upper_bound, integration_samples)
     print(f"------------------------------------------------------\nEstimated integral of {function_name} from {lower_bound} to {upper_bound}: {integral_estimate}")
     
-    # Prompt at end of method
-    print("------------------------------------------------------\nWould you like to export the integration results? (yes/no)")
-    export_int_choice: str = input().lower()
+    export_int_choice = str(input("------------------------------------------------------\nWould you like to export the integration results? (yes/no): ")).lower()
     while export_int_choice not in ['yes', 'y', 'no', 'n']:
-        print("Please enter 'yes' or 'no'.")
-        export_int_choice = input().lower()
+        export_int_choice = str(input("Please enter 'yes' or 'no'.")).lower()
     if export_int_choice in ['yes', 'y']:
         export_integration_results(function_name, lower_bound, upper_bound, integration_samples, integral_estimate)
     
-    print("------------------------------------------------------\nWould you like a visualization of the integral estimates, error, or a combined subplot? (Enter 'estimates', 'error', or 'subplot'[...")
-    int_vis_choice: str = input().lower()
+    int_vis_choice = str(input("------------------------------------------------------\nWould you like a visualization of the integral estimates, error, or a combined subplot? (Enter 'estimates', 'error', or 'subplot'): ")).lower()
     while int_vis_choice not in ['estimates', 'error', 'subplot', 'no', 'n']:
-        print("Please enter 'estimates', 'error', 'subplot' or 'no'.")
-        int_vis_choice = input().lower()
+        int_vis_choice = str(input("Please enter 'estimates', 'error', 'subplot' or 'no'.")).lower()
     
     if int_vis_choice in ['estimates', 'error', 'subplot']:
         if int_vis_choice == 'estimates':
@@ -114,20 +91,12 @@ def handle_monte_carlo_integration() -> None:
             visualizeIntSubplot(integration_samples, integrand, lower_bound, upper_bound)
 
 
-def handle_pi_estimation() -> None:
-    """
-    Handle Pi estimation simulation.
-    Prompts user at start and end of method.
-    """
+def pi_estimation() -> None:
     print("You have selected option 2: Estimate the value of π using the Monte Carlo method.")
-    
-    print("------------------------------------------------------------------------\nHow many random samples would you like to use to estimate π?")
-    num_samples: int = int(input())
+    num_samples = int(input("------------------------------------------------------------------------\nEnter the number of samples to estimate π: "))
     
     while num_samples > 10000000 or num_samples <= 0:
-        print("Please enter a number of samples less than or equal to 10,000,000 and greater than 0.")
-        num_samples = int(input())
-    
+        num_samples = int(input("Please enter a number of samples less than or equal to 10,000,000 and greater than 0: "))
     monte_carlo_result: float = monte_carlo_pi(num_samples)
     error_percentage: float = percent_error(num_samples)
     
@@ -135,6 +104,7 @@ def handle_pi_estimation() -> None:
     samples_per_run: int = 100000
     estimates: list = [monte_carlo_pi(samples_per_run) for _ in range(runs)]
     confidence_intervals: list = []
+    
     for conf in [0.90, 0.95, 0.99]:
         ci: dict = confidence_interval(estimates, confidence=conf)
         confidence_intervals.append(ci)
@@ -144,20 +114,15 @@ def handle_pi_estimation() -> None:
     
     print(f"------------------------------------------------------\nEstimated value of π: {monte_carlo_result}\nPercent error: {error_percentage}%")
     
-    # Prompt at end of method
-    print("------------------------------------------------------\nWould you like to export the Pi estimation results? (yes/no)")
-    export_pi_choice: str = input().lower()
+    export_pi_choice = str(input("------------------------------------------------------\nWould you like to export the Pi estimation results? (yes/no): ")).lower()
     while export_pi_choice not in ['yes', 'y', 'no', 'n']:
-        print("Please enter 'yes' or 'no'.")
-        export_pi_choice = input().lower()
+        export_pi_choice = str(input("Please enter 'yes' or 'no'.")).lower()
     if export_pi_choice in ['yes', 'y']:
         export_pi_results(num_samples, monte_carlo_result, error_percentage, confidence_intervals)
     
-    print("------------------------------------------------------\nWould you like a visualization of the estimates, error, or a combined subplot? (Enter 'estimates', 'error', or 'subplot')")
-    visualization_choice: str = input().lower()
+    visualization_choice = str(input("------------------------------------------------------\nWould you like a visualization of the estimates, error, or a combined subplot? (Enter 'estimates', 'error', or 'subplot'): ")).lower()
     while visualization_choice not in ['estimates', 'error', 'subplot', 'no', 'n']:
-        print("Please enter 'estimates', 'error', 'subplot' or 'no'.")
-        visualization_choice = input().lower()
+        visualization_choice = str(input("Please enter 'estimates', 'error', 'subplot' or 'no': ")).lower()
     
     if visualization_choice in ['estimates', 'error', 'subplot']:
         if visualization_choice == 'estimates':
@@ -168,7 +133,7 @@ def handle_pi_estimation() -> None:
             visualizePiSubplot(num_samples)
 
 
-def handle_confidence_intervals() -> None:
+def confidence_intervals() -> None:
     """
     Handle Confidence Intervals and Statistical Analysis.
     """
@@ -176,15 +141,24 @@ def handle_confidence_intervals() -> None:
     print("This feature is under development.")
 
 
-def handle_visualizations() -> None:
-    """
-    Handle Visualizations option.
-    """
-    print("You have selected option 4: Visualizations.")
-    print("This feature is under development.")
+def visualizations() -> None:
+    print("You have selected option 4: Visualizations. Please select a specific visualization type from the menu.\n------------------------------------------------------------------------")
+    print("""1. Estimate the integral of a function using Monte Carlo integration
+2. Estimate the value of π using the Monte Carlo method
+3. Confidence Intervals and Statistical Analysis
+4. Visualizations
+5. Variance Reduction Techniques
+6. Markov Chain Monte Carlo (MCMC) Methods
+7. PDE and SDE Solvers
+8. Sequential Monte Carlo Analysis (particle filters)
+9. Rare event and Tail Risk Simulation
+10. European Option Pricing (Black-Scholes Monte Carlo)
+------------------------------------------------------------------------"""
+    )
+    visualizations_choice = int(input("Enter the number of the visualization you would like to run (1-10): "))
 
 
-def handle_variance_reduction() -> None:
+def variance_reduction() -> None:
     """
     Handle Variance Reduction Techniques.
     """
@@ -192,7 +166,7 @@ def handle_variance_reduction() -> None:
     print("This feature is under development.")
 
 
-def handle_mcmc() -> None:
+def mcmc() -> None:
     """
     Handle Markov Chain Monte Carlo (MCMC) Methods.
     """
@@ -200,7 +174,7 @@ def handle_mcmc() -> None:
     print("This feature is under development.")
 
 
-def handle_pde_sde() -> None:
+def pde_sde() -> None:
     """
     Handle PDE and SDE Solvers.
     """
@@ -208,7 +182,7 @@ def handle_pde_sde() -> None:
     print("This feature is under development.")
 
 
-def handle_sequential_monte_carlo() -> None:
+def sequential_monte_carlo() -> None:
     """
     Handle Sequential Monte Carlo Analysis (particle filters).
     """
@@ -216,7 +190,7 @@ def handle_sequential_monte_carlo() -> None:
     print("This feature is under development.")
 
 
-def handle_rare_event() -> None:
+def rare_event() -> None:
     """
     Handle Rare event and Tail Risk Simulation.
     """
@@ -224,15 +198,8 @@ def handle_rare_event() -> None:
     print("This feature is under development.")
 
 
-def handle_european_options() -> None:
-    """
-    Handle European Option Pricing using Monte Carlo under Black-Scholes.
-    """
-    if not _HAS_EUROPEAN:
-        print("European option pricing module not available (simulations.european_options). Please add it to the project to use this feature.")
-        return
-
-    print("You have selected option 11: European Option Pricing (Black-Scholes Monte Carlo).")
+def european_options() -> None:
+    print("You have selected option 10: European Option Pricing (Black-Scholes Monte Carlo).\n------------------------------------------------------------------------")
 
     def _read_float(prompt: str, positive: bool = False) -> float:
         while True:
@@ -289,31 +256,31 @@ def main() -> None:
     while True:
         sim_choice: int = get_menu_choice()
         
-        if sim_choice == 12:
+        if sim_choice == 11:
             print("------------------------------------------------------------------------\nExiting the program. Thank you!")
             break
         elif sim_choice == 1:
-            handle_monte_carlo_integration()
+            monte_carlo_integration()
         elif sim_choice == 2:
-            handle_pi_estimation()
+            pi_estimation()
         elif sim_choice == 3:
-            handle_confidence_intervals()
+            confidence_intervals()
         elif sim_choice == 4:
-            handle_visualizations()
+            visualizations()
         elif sim_choice == 5:
-            handle_variance_reduction()
+            variance_reduction()
         elif sim_choice == 6:
-            handle_mcmc()
+            mcmc()
         elif sim_choice == 7:
-            handle_pde_sde()
+            pde_sde()
         elif sim_choice == 8:
-            handle_sequential_monte_carlo()
+            sequential_monte_carlo()
         elif sim_choice == 9:
-            handle_rare_event()
-        elif sim_choice == 11:
-            handle_european_options()
+            rare_event()
+        elif sim_choice == 10:
+            european_options()
         else:
-            print("Invalid choice. Please select a number between 1 and 12.")
+            print("Invalid choice. Please select a number between 1 and 11.")
 
 
 if __name__ == "__main__":
