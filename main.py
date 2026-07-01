@@ -10,7 +10,7 @@ from export import export_pi_results, export_integration_results
 # European options (Black-Scholes Monte Carlo)
 # This import is optional during development if the module is not yet present.
 try:
-    from simulations.european_options import monte_carlo_european, black_scholes_price
+    from european_options import monte_carlo_european, black_scholes_price
     _HAS_EUROPEAN = True
 except Exception:
     _HAS_EUROPEAN = False
@@ -36,7 +36,7 @@ def get_menu_choice() -> int:
 10. (reserved)
 11. European Option Pricing (Black-Scholes Monte Carlo)
 12. Exit
-------------------------------------------------------------------------""
+------------------------------------------------------------------------"""
     )
     
     print("Enter the number of the simulation you would like to run (1-12):") 

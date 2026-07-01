@@ -1,5 +1,5 @@
 import math
-from simulations.european_options import black_scholes_price, monte_carlo_european
+from european_options import black_scholes_price, monte_carlo_european
 
 def test_mc_close_to_bs_plain():
     S0 = 100.0
