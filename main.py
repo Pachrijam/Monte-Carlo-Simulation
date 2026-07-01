@@ -28,7 +28,6 @@ if sim_choice != 10:
     if sim_choice == 1:
         print("You have selected option 1: Estimate the integral of a function using Monte Carlo integration.")
         
-        # Prompt user for integration
         integrand_functions = {
             '1': ("x^2", lambda x: x ** 2),
             '2': ("sin(x)", math.sin),
@@ -37,7 +36,7 @@ if sim_choice != 10:
             '5': ("cos(x)", math.cos),
             '6': ("log(abs(x) + 1)", lambda x: math.log(abs(x) + 1)),
         }
-        print("Choose a function to integrate:")
+        print("------------------------------------------------------------------------\nChoose a function to integrate:")
         for key, (name, _) in integrand_functions.items():
             print(f"{key}. {name}")
         print("Enter the number of the function:")
@@ -61,7 +60,6 @@ if sim_choice != 10:
         integral_estimate = monte_carlo_integration(integrand, lower_bound, upper_bound, integration_samples)
         print(f"------------------------------------------------------\nEstimated integral of {function_name} from {lower_bound} to {upper_bound}: {integral_estimate}")
 
-        # Prompt user if they wish to export the results as json or csv file
         print("------------------------------------------------------\nWould you like to export the integration results? (yes/no)")
         export_int_choice = input().lower()
         while export_int_choice not in ['yes', 'y', 'no', 'n']:
@@ -70,7 +68,6 @@ if sim_choice != 10:
         if export_int_choice in ['yes', 'y']:
             export_integration_results(function_name, lower_bound, upper_bound, integration_samples, integral_estimate)
         
-        # Prompt user if they wish to visualize the results as a plot
         print("------------------------------------------------------\nWould you like a visualization of the integral estimates, error, or a combined subplot? (Enter 'estimates', 'error', or 'subplot')")
         int_vis_choice = input().lower()
         while int_vis_choice not in ['estimates', 'error', 'subplot', 'no', 'n']:
@@ -88,7 +85,7 @@ if sim_choice != 10:
     elif sim_choice == 2:
         print("You have selected option 2: Estimate the value of π using the Monte Carlo method.")
         
-        print("How many random samples would you like to use to estimate π?")
+        print("------------------------------------------------------------------------\nHow many random samples would you like to use to estimate π?")
         num_samples = int(input())
 
         while num_samples > 10000000 or num_samples <= 0:
@@ -111,7 +108,6 @@ if sim_choice != 10:
 
         print(f"------------------------------------------------------\nEstimated value of π: {monte_carlo_result}\nPercent error: {error_percentage}%")
 
-        # Prompt user if they wish to export the results as json or csv file
         print("------------------------------------------------------\nWould you like to export the Pi estimation results? (yes/no)")
         export_pi_choice = input().lower()
         while export_pi_choice not in ['yes', 'y', 'no', 'n']:
@@ -120,7 +116,6 @@ if sim_choice != 10:
         if export_pi_choice in ['yes', 'y']:
             export_pi_results(num_samples, monte_carlo_result, error_percentage, confidence_intervals)
         
-        # Prompt user if they wish to visualize the results as a plot
         print("------------------------------------------------------\nWould you like a visualization of the estimates, error, or a combined subplot? (Enter 'estimates', 'error', or 'subplot')")
 
         visualization_choice = input().lower()
