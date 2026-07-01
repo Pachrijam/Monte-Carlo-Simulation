@@ -7,12 +7,21 @@ from calculateInt import monte_carlo_integration
 from visualizationInt import visualizeIntEstimates, visualizeIntPercentError, visualizeIntSubplot
 from export import export_pi_results, export_integration_results
 
+# European options (Black-Scholes Monte Carlo)
+# This import is optional during development if the module is not yet present.
+try:
+    from simulations.european_options import monte_carlo_european, black_scholes_price
+    _HAS_EUROPEAN = True
+except Exception:
+    _HAS_EUROPEAN = False
+
+
 def get_menu_choice() -> int:
     """
     Display menu and get user's simulation choice.
     
     Returns:
-        int: User's menu selection (1-10)
+        int: User's menu selection (1-12)
     """
     print("--------------------------------<<MENU>>--------------------------------\nSELECT AN OPTION FROM BELOW:\n------------------------------------------------------------------------")
     print("""1. Estimate the integral of a function using Monte Carlo integration
@@ -24,11 +33,13 @@ def get_menu_choice() -> int:
 7. PDE and SDE Solvers
 8. Sequential Monte Carlo Analysis (particle filters)
 9. Rare event and Tail Risk Simulation
-10. Exit
-------------------------------------------------------------------------"""
+10. (reserved)
+11. European Option Pricing (Black-Scholes Monte Carlo)
+12. Exit
+------------------------------------------------------------------------""
     )
     
-    print("Enter the number of the simulation you would like to run (1-10):") 
+    print("Enter the number of the simulation you would like to run (1-12):") 
     sim_choice: int = int(input())
     return sim_choice
 
@@ -88,7 +99,7 @@ def handle_monte_carlo_integration() -> None:
     if export_int_choice in ['yes', 'y']:
         export_integration_results(function_name, lower_bound, upper_bound, integration_samples, integral_estimate)
     
-    print("------------------------------------------------------\nWould you like a visualization of the integral estimates, error, or a combined subplot? (Enter 'estimates', 'error', or 'subplot')")
+    print("------------------------------------------------------\nWould you like a visualization of the integral estimates, error, or a combined subplot? (Enter 'estimates', 'error', or 'subplot'[...")
     int_vis_choice: str = input().lower()
     while int_vis_choice not in ['estimates', 'error', 'subplot', 'no', 'n']:
         print("Please enter 'estimates', 'error', 'subplot' or 'no'.")
@@ -213,6 +224,63 @@ def handle_rare_event() -> None:
     print("This feature is under development.")
 
 
+def handle_european_options() -> None:
+    """
+    Handle European Option Pricing using Monte Carlo under Black-Scholes.
+    """
+    if not _HAS_EUROPEAN:
+        print("European option pricing module not available (simulations.european_options). Please add it to the project to use this feature.")
+        return
+
+    print("You have selected option 11: European Option Pricing (Black-Scholes Monte Carlo).")
+
+    def _read_float(prompt: str, positive: bool = False) -> float:
+        while True:
+            try:
+                v = float(input(prompt))
+                if positive and v <= 0:
+                    print("Please enter a positive value.")
+                    continue
+                return v
+            except ValueError:
+                print("Invalid number, please try again.")
+
+    S0 = _read_float("Enter initial stock price S0 (e.g., 100): ", positive=True)
+    K = _read_float("Enter strike price K (e.g., 100): ", positive=True)
+    T = _read_float("Enter time to maturity T in years (e.g., 1): ", positive=True)
+    r = _read_float("Enter risk-free rate r as decimal (e.g., 0.01): ")
+    sigma = _read_float("Enter volatility sigma as decimal (e.g., 0.2): ", positive=True)
+
+    option: str = "call"
+    print("Enter option type ('call' or 'put') [call]: ")
+    opt_input = input().strip().lower()
+    if opt_input in ['call', 'put']:
+        option = opt_input
+
+    print("Enter number of Monte Carlo simulations (n_sim) [20000]: ")
+    try:
+        n_sim = int(input())
+    except Exception:
+        n_sim = 20000
+    if n_sim <= 0:
+        n_sim = 20000
+
+    print("Use antithetic variates? (yes/no) [no]: ")
+    antithetic = input().strip().lower() in ['yes', 'y']
+    print("Use control variate? (yes/no) [no]: ")
+    control_variate = input().strip().lower() in ['yes', 'y']
+
+    print("Enter random seed (integer) or leave blank for random: ")
+    seed_input = input().strip()
+    seed = int(seed_input) if seed_input.isdigit() else None
+
+    mc_price, mc_se = monte_carlo_european(S0, K, T, r, sigma, option=option, n_sim=n_sim, antithetic=antithetic, control_variate=control_variate, seed=seed)
+    bs_price = black_scholes_price(S0, K, T, r, sigma, option)
+
+    print(f"------------------------------------------------------\nMonte Carlo estimated price: {mc_price} (SE: {mc_se})")
+    print(f"Black-Scholes closed-form price: {bs_price}")
+
+
 def main() -> None:
     """
     Main application loop.
@@ -221,7 +289,7 @@ def main() -> None:
     while True:
         sim_choice: int = get_menu_choice()
         
-        if sim_choice == 10:
+        if sim_choice == 12:
             print("------------------------------------------------------------------------\nExiting the program. Thank you!")
             break
         elif sim_choice == 1:
@@ -242,8 +310,10 @@ def main() -> None:
             handle_sequential_monte_carlo()
         elif sim_choice == 9:
             handle_rare_event()
+        elif sim_choice == 11:
+            handle_european_options()
         else:
-            print("Invalid choice. Please select a number between 1 and 10.")
+            print("Invalid choice. Please select a number between 1 and 12.")
 
 
 if __name__ == "__main__":
