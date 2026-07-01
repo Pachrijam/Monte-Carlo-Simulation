@@ -40,15 +40,6 @@ To explore this project:
 
 3. Run simulation scripts to see Monte Carlo methods in action
 
-## Future Improvements
-
-The following features and enhancements are planned or under development:
-
-- **European Option Pricing via Monte Carlo**: Implementation of risk-neutral Monte Carlo pricing for European calls and puts under the Black–Scholes framework with variance reduction techniques (antithetic variates, control variates)
-  - Validation against closed-form Black–Scholes prices
-  - Comprehensive unit tests and documentation
-  - Educational notebooks demonstrating variance reduction benefits
-
 ## Contributing
 
 This is an active learning project. Contributions, suggestions, and improvements are welcome! Check the [Issues](https://github.com/Pachrijam/Monte-Carlo-Simulation/issues) page to see what's being worked on.
