@@ -219,26 +219,20 @@ def european_options() -> None:
     sigma = _read_float("Enter volatility sigma as decimal (e.g., 0.2): ", positive=True)
 
     option: str = "call"
-    print("Enter option type ('call' or 'put') [call]: ")
-    opt_input = input().strip().lower()
+    opt_input = input("Enter option type ('call' or 'put') [call]: ").strip().lower()
     if opt_input in ['call', 'put']:
         option = opt_input
 
-    print("Enter number of Monte Carlo simulations (n_sim) [20000]: ")
     try:
-        n_sim = int(input())
+        n_sim = int(input("Enter number of Monte Carlo simulations (n_sim) [20000]: "))
     except Exception:
         n_sim = 20000
     if n_sim <= 0:
         n_sim = 20000
 
-    print("Use antithetic variates? (yes/no) [no]: ")
-    antithetic = input().strip().lower() in ['yes', 'y']
-    print("Use control variate? (yes/no) [no]: ")
-    control_variate = input().strip().lower() in ['yes', 'y']
-
-    print("Enter random seed (integer) or leave blank for random: ")
-    seed_input = input().strip()
+    antithetic = input("Use antithetic variates? (yes/no) [no]: ").strip().lower() in ['yes', 'y']
+    control_variate = input("Use control variate? (yes/no) [no]: ").strip().lower() in ['yes', 'y']
+    seed_input = input("Enter random seed (integer) or leave blank for random: ").strip()
     seed = int(seed_input) if seed_input.isdigit() else None
 
     mc_price, mc_se = monte_carlo_european(S0, K, T, r, sigma, option=option, n_sim=n_sim, antithetic=antithetic, control_variate=control_variate, seed=seed)
