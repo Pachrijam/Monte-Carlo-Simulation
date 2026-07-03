@@ -7,6 +7,7 @@ from calculateInt import monte_carlo_integration as calculate_int
 from visualizationInt import visualizeIntEstimates, visualizeIntPercentError, visualizeIntSubplot
 from export import export_pi_results, export_integration_results
 from european_options import monte_carlo_european, black_scholes_price
+from mcmc_bayes import metropolis_hastings, gibbs_sampler, autocorrelation, effective_sample_size, posterior_summary, trace_plot, acf_plot, summarize_chain
 
 
 def get_menu_choice() -> int:
@@ -138,7 +139,6 @@ def confidence_intervals() -> None:
     Handle Confidence Intervals and Statistical Analysis.
     """
     print("You have selected option 3: Confidence Intervals and Statistical Analysis.")
-    print("This feature is under development.")
 
 
 def visualizations() -> None:
@@ -167,11 +167,8 @@ def variance_reduction() -> None:
 
 
 def mcmc() -> None:
-    """
-    Handle Markov Chain Monte Carlo (MCMC) Methods.
-    """
     print("You have selected option 6: Markov Chain Monte Carlo (MCMC) Methods.")
-    print("This feature is under development.")
+    
 
 
 def pde_sde() -> None:
