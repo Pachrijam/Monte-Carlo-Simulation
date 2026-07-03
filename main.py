@@ -8,6 +8,7 @@ from visualizationInt import visualizeIntEstimates, visualizeIntPercentError, vi
 from export import export_pi_results, export_integration_results
 from european_options import monte_carlo_european, black_scholes_price
 from mcmc_bayes import metropolis_hastings, gibbs_sampler, autocorrelation, effective_sample_size, posterior_summary, trace_plot, acf_plot, summarize_chain
+import numpy as np
 
 
 def get_menu_choice() -> int:
@@ -79,7 +80,7 @@ def monte_carlo_integration() -> None:
     if export_int_choice in ['yes', 'y']:
         export_integration_results(function_name, lower_bound, upper_bound, integration_samples, integral_estimate)
     
-    int_vis_choice = str(input("------------------------------------------------------\nWould you like a visualization of the integral estimates, error, or a combined subplot? (Enter 'estimates', 'error', or 'subplot'): ")).lower()
+    int_vis_choice = str(input("------------------------------------------------------\nWould you like a visualization of the integral estimates, error, or a combined subplot? (Enter 'estimates', 'error', 'subplot' or 'no'): ")).lower()
     while int_vis_choice not in ['estimates', 'error', 'subplot', 'no', 'n']:
         int_vis_choice = str(input("Please enter 'estimates', 'error', 'subplot' or 'no'.")).lower()
     
@@ -121,7 +122,7 @@ def pi_estimation() -> None:
     if export_pi_choice in ['yes', 'y']:
         export_pi_results(num_samples, monte_carlo_result, error_percentage, confidence_intervals)
     
-    visualization_choice = str(input("------------------------------------------------------\nWould you like a visualization of the estimates, error, or a combined subplot? (Enter 'estimates', 'error', or 'subplot'): ")).lower()
+    visualization_choice = str(input("------------------------------------------------------\nWould you like a visualization of the estimates, error, or a combined subplot? (Enter 'estimates', 'error', 'subplot' or 'no'): ")).lower()
     while visualization_choice not in ['estimates', 'error', 'subplot', 'no', 'n']:
         visualization_choice = str(input("Please enter 'estimates', 'error', 'subplot' or 'no': ")).lower()
     
@@ -168,7 +169,73 @@ def variance_reduction() -> None:
 
 def mcmc() -> None:
     print("You have selected option 6: Markov Chain Monte Carlo (MCMC) Methods.")
+    print("------------------------------------------------------------------------\nSelect an MCMC method:")
+    print("""1. Metropolis-Hastings Sampling
+2. Gibbs Sampling
+3. Exit""")
     
+    mcmc_choice = int(input("Enter the number of the method (1-3): "))
+    
+    if mcmc_choice == 1:
+        print("------------------------------------------------------------------------\nMetropolis-Hastings Sampling")
+        
+        def log_normal(x: np.ndarray) -> float:
+            return -0.5 * np.sum(x ** 2)
+        
+        dim = int(input("Enter the dimensionality of the target distribution: "))
+        while dim <= 0:
+            dim = int(input("Please enter a positive integer: "))
+        
+        n_samples = int(input("Enter the number of samples to draw: "))
+        while n_samples > 10000000 or n_samples <= 0:
+            n_samples = int(input("Please enter a number of samples less than or equal to 10,000,000 and greater than 0: "))
+        
+        proposal_std = float(input("Enter the proposal standard deviation (e.g., 1.0): "))
+        while proposal_std <= 0:
+            proposal_std = float(input("Please enter a positive value: "))
+        
+        burn_in = int(input("Enter the burn-in period (e.g., 1000): "))
+        while burn_in < 0:
+            burn_in = int(input("Please enter a non-negative integer: "))
+        
+        thin = int(input("Enter the thinning factor (e.g., 1): "))
+        while thin <= 0:
+            thin = int(input("Please enter a positive integer: "))
+        
+        initial = np.zeros(dim)
+        samples, acc_rate = metropolis_hastings(log_normal, initial, n_samples, proposal_std=proposal_std, burn_in=burn_in, thin=thin)
+        
+        print(f"------------------------------------------------------------------------\nMetropolis-Hastings Results:")
+        print(f"Acceptance rate: {acc_rate:.4f}")
+        
+        mean, lower, upper = posterior_summary(samples, cred=0.95)
+        print(f"95% Credible Intervals for each dimension:")
+        for i in range(dim):
+            print(f"  Dimension {i}: Mean={mean[i]:.4f}, 95% CI=({lower[i]:.4f}, {upper[i]:.4f})")
+        
+        trace_vis = str(input("------------------------------------------------------\nWould you like to visualize the trace plot? (yes/no): ")).lower()
+        while trace_vis not in ['yes', 'y', 'no', 'n']:
+            trace_vis = str(input("Please enter 'yes' or 'no': ")).lower()
+        
+        if trace_vis in ['yes', 'y'] and dim > 0:
+            trace_plot(samples, var_idx=0, show=True)
+        
+        acf_vis = str(input("------------------------------------------------------\nWould you like to visualize the autocorrelation plot? (yes/no): ")).lower()
+        while acf_vis not in ['yes', 'y', 'no', 'n']:
+            acf_vis = str(input("Please enter 'yes' or 'no': ")).lower()
+        
+        if acf_vis in ['yes', 'y'] and dim > 0:
+            acf_plot(samples, var_idx=0, show=True)
+    
+    elif mcmc_choice == 2:
+        print("------------------------------------------------------------------------\nGibbs Sampling")
+        print("This feature requires custom conditional samplers and is under development.")
+    
+    elif mcmc_choice == 3:
+        return
+    
+    else:
+        print("Invalid choice. Please select a number between 1 and 3.")
 
 
 def pde_sde() -> None:
