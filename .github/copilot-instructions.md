@@ -82,7 +82,7 @@ def double_values(values):
 
 </one_shot_example>
 
-## <summary>
+## summary
 
 * No comments ever
 * Prioritize naming clarity
