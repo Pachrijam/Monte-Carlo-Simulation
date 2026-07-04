@@ -80,40 +80,6 @@ def posterior_summary(samples: np.ndarray, cred: float = 0.95) -> Tuple[np.ndarr
     return mean, lower, upper
 
 
-def trace_plot(samples: np.ndarray, var_idx: int = 0, ax=None, show: bool = True, savepath: Optional[str] = None):
-    import matplotlib.pyplot as plt
-    s = np.asarray(samples)
-    y = s[:, var_idx]
-    if ax is None:
-        fig, ax = plt.subplots(figsize=(8, 3))
-    ax.plot(y, color="C0")
-    ax.set_xlabel("Iteration")
-    ax.set_ylabel(f"x[{var_idx}]")
-    if savepath:
-        ax.figure.savefig(savepath, bbox_inches="tight")
-    if show:
-        plt.show()
-
-
-def acf_plot(samples: np.ndarray, var_idx: int = 0, max_lag: int = 50, ax=None, show: bool = True, savepath: Optional[str] = None):
-    import matplotlib.pyplot as plt
-    s = np.asarray(samples)
-    acf = autocorrelation(s[:, var_idx], max_lag)
-    lags = np.arange(acf.size)
-    if ax is None:
-        fig, ax = plt.subplots(figsize=(6, 3))
-    try:
-        ax.stem(lags, acf, use_line_collection=True)
-    except TypeError:
-        ax.stem(lags, acf)
-    ax.set_xlabel("Lag")
-    ax.set_ylabel("Autocorrelation")
-    if savepath:
-        ax.figure.savefig(savepath, bbox_inches="tight")
-    if show:
-        plt.show()
-
-
 def summarize_chain(samples: np.ndarray, var_names: Optional[List[str]] = None, cred: float = 0.95) -> None:
     mean, lower, upper = posterior_summary(samples, cred)
     if var_names is None:

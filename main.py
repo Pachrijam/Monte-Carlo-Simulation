@@ -7,8 +7,9 @@ from confidence import confidence_interval
 from calculateInt import monte_carlo_integration as calculate_int
 from visualizationInt import visualizeIntEstimates, visualizeIntPercentError, visualizeIntSubplot
 from export import export_pi_results, export_integration_results
-from european_options import monte_carlo_european, black_scholes_price
-from mcmc_bayes import metropolis_hastings, gibbs_sampler, autocorrelation, effective_sample_size, posterior_summary, trace_plot, acf_plot, summarize_chain
+from calculate_european_options import monte_carlo_european, black_scholes_price
+from calculate_mcmc_bayes import metropolis_hastings, gibbs_sampler, autocorrelation, effective_sample_size, posterior_summary, summarize_chain
+from visualizationMCMC import trace_plot, acf_plot, acf_trace_subplot
 
 
 def get_menu_choice() -> int:
@@ -197,13 +198,56 @@ def mcmc() -> None:
         for i in range(dim):
             print(f"Dimension {i}: Mean={mean[i]:.4f},95% CI=({lower[i]:.4f}, {upper[i]:.4f})")
 
-        trace_vis = str(input("------------------------------------------------------------------------\nWould you like to visualize the trace plots? (yes/no): ")).lower()
-        while trace_vis not in ['yes', 'y', 'no', 'n']:
-            trace_vis = str(input("Please enter 'yes' or 'no'.")).lower()
-        if trace_vis in ['yes', 'y'] and dim >0:
+        trace_vis = str(input("------------------------------------------------------------------------\nWould you like to visualize the samples? (acf/trace/subplot/no): ")).lower()
+        while trace_vis not in ['acf', 'trace', 'subplot', 'no', 'n']:
+            trace_vis = str(input("Please enter 'acf', 'trace', 'subplot', or 'no'.")).lower()
+        if trace_vis in ['acf'] and dim > 0:
             acf_plot(samples, var_idx=0, show=True)
+        elif trace_vis in ['trace'] and dim > 0:
+            trace_plot(samples, var_idx=0, show=True)
+        elif trace_vis in ['subplot'] and dim > 0:
+            acf_trace_subplot(samples, var_idx=0, show=True)
     elif mcmc_choice == 2:    
         print("------------------------------------------------------------------------\nYou have selected Gibbs Sampling.")
+        dim = int(input("Enter the dimension of the target distribution (e.g., 2): "))
+        while dim <= 0:
+            dim = int(input("Please enter a positive integer for the dimension: "))
+        num_samples = int(input("Enter the number of samples to generate (e.g., 1000): "))
+        while num_samples <= 0 or num_samples > 1000000:
+            num_samples = int(input("Please enter a positive integer less than or equal to 1,000,000 for the number of samples: "))
+        burn_in = int(input("Enter the number of burn-in samples (e.g., 100): "))
+        while burn_in < 0 or burn_in >= num_samples:
+            burn_in = int(input("Please enter a non-negative integer less than the number of samples for burn-in: "))
+        thin = int(input("Enter the thinning interval (e.g., 1 for no thinning): "))
+        while thin <= 0:
+            thin = int(input("Please enter a positive integer for the thinning interval: "))
+
+        def gibbs_standard_normal(dim: int, n_samples: int, burn_in: int = 0, thin: int = 1) -> np.ndarray:
+            total = burn_in + n_samples * thin
+            x = np.zeros(dim)
+            samples = []
+            for t in range(total):
+                for i in range(dim):
+                    x[i] = np.random.randn()
+                if t >= burn_in and ((t - burn_in) % thin == 0):
+                    samples.append(x.copy())
+            return np.array(samples)
+
+        samples = gibbs_standard_normal(dim, num_samples - burn_in if burn_in < num_samples else num_samples, burn_in=burn_in, thin=thin)
+        print(f"------------------------------------------------------------------------\nGibbs sampling completed. Generated {samples.shape[0]} samples.")
+        mean, lower, upper = posterior_summary(samples, cred=0.95)
+        print(f"95% credible intervals for each dimension:")
+        for i in range(dim):
+            print(f"Dimension {i}: Mean={mean[i]:.4f},95% CI=({lower[i]:.4f}, {upper[i]:.4f})")
+        trace_vis = str(input("------------------------------------------------------------------------\nWould you like to visualize the samples? (acf/trace/subplot/no): ")).lower()
+        while trace_vis not in ['acf', 'trace', 'subplot', 'no', 'n']:
+            trace_vis = str(input("Please enter 'acf', 'trace', 'subplot', or 'no'.")).lower()
+        if trace_vis in ['acf'] and dim > 0:
+            acf_plot(samples, var_idx=0, show=True)
+        elif trace_vis in ['trace'] and dim > 0:
+            trace_plot(samples, var_idx=0, show=True)
+        elif trace_vis in ['subplot'] and dim > 0:
+            acf_trace_subplot(samples, var_idx=0, show=True)
     elif mcmc_choice == 3:
         print("------------------------------------------------------------------------\nExiting MCMC methods.")
 
