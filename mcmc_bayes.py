@@ -102,7 +102,10 @@ def acf_plot(samples: np.ndarray, var_idx: int = 0, max_lag: int = 50, ax=None, 
     lags = np.arange(acf.size)
     if ax is None:
         fig, ax = plt.subplots(figsize=(6, 3))
-    ax.stem(lags, acf, use_line_collection=True)
+    try:
+        ax.stem(lags, acf, use_line_collection=True)
+    except TypeError:
+        ax.stem(lags, acf)
     ax.set_xlabel("Lag")
     ax.set_ylabel("Autocorrelation")
     if savepath:

@@ -136,9 +136,6 @@ def pi_estimation() -> None:
 
 
 def confidence_intervals() -> None:
-    """
-    Handle Confidence Intervals and Statistical Analysis.
-    """
     print("You have selected option 3: Confidence Intervals and Statistical Analysis.")
 
 
@@ -160,9 +157,6 @@ def visualizations() -> None:
 
 
 def variance_reduction() -> None:
-    """
-    Handle Variance Reduction Techniques.
-    """
     print("You have selected option 5: Variance Reduction Techniques.")
     print("This feature is under development.")
 
@@ -208,7 +202,6 @@ def mcmc() -> None:
             trace_vis = str(input("Please enter 'yes' or 'no'.")).lower()
         if trace_vis in ['yes', 'y'] and dim >0:
             acf_plot(samples, var_idx=0, show=True)
-            
     elif mcmc_choice == 2:    
         print("------------------------------------------------------------------------\nYou have selected Gibbs Sampling.")
     elif mcmc_choice == 3:
@@ -216,25 +209,16 @@ def mcmc() -> None:
 
 
 def pde_sde() -> None:
-    """
-    Handle PDE and SDE Solvers.
-    """
     print("You have selected option 7: PDE and SDE Solvers.")
     print("This feature is under development.")
 
 
 def sequential_monte_carlo() -> None:
-    """
-    Handle Sequential Monte Carlo Analysis (particle filters).
-    """
     print("You have selected option 8: Sequential Monte Carlo Analysis (particle filters).")
     print("This feature is under development.")
 
 
 def rare_event() -> None:
-    """
-    Handle Rare event and Tail Risk Simulation.
-    """
     print("You have selected option 9: Rare event and Tail Risk Simulation.")
     print("This feature is under development.")
 
@@ -284,10 +268,6 @@ def european_options() -> None:
 
 
 def main() -> None:
-    """
-    Main application loop.
-    Handles menu selection and routing to appropriate simulation methods.
-    """
     while True:
         sim_choice: int = get_menu_choice()
         
