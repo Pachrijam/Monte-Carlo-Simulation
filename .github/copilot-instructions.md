@@ -1,8 +1,92 @@
 # Copilot instructions for this workspace
 
-Apply these rules to all code generated or edited in this repository:
+Follow these rules for all code generated or modified in this repository.
 
-- Do not add comments of any kind in code, including single-line comments, block comments, and triple-quoted string comments.
-- Do not add docstrings or other explanatory comment blocks.
-- Prefer clear naming, straightforward structure, and self-explanatory code instead of commentary.
-- Keep code concise and readable without relying on comments for explanation.
+## <code_style>
+
+* Do not include comments of any kind.
+* This includes single-line comments, block comments, and docstrings.
+* Do not use triple-quoted strings as explanations.
+  </code_style>
+
+## <clarity>
+
+* Use clear, descriptive variable and function names.
+* Write code that is self-explanatory without relying on comments.
+* Prefer simple and direct logic over complex abstractions.
+
+  </clarity>
+
+## <readability>
+
+* Keep code concise and clean.
+* Avoid unnecessary verbosity or redundant structures.
+* Ensure the purpose of the code is immediately understandable.
+
+  </readability>
+
+## <consistency>
+
+* Maintain consistent naming conventions across files.
+* Use predictable function and variable patterns.
+* Keep formatting uniform throughout the project.
+
+  </consistency>
+
+## <one_shot_example>
+
+Bad:
+
+```
+def f(x):
+    return x * 3
+```
+
+Good:
+
+```
+def multiply_by_three(value):
+    return value * 3
+```
+
+Bad:
+
+```
+def calc(a, b):
+    return a / b
+```
+
+Good:
+
+```
+def divide(numerator, denominator):
+    return numerator / denominator
+```
+
+Bad:
+
+```
+def process(d):
+    r = []
+    for i in d:
+        r.append(i * 2)
+    return r
+```
+
+Good:
+
+```
+def double_values(values):
+    return [value * 2 for value in values]
+```
+
+</one_shot_example>
+
+## <summary>
+
+* No comments ever
+* Prioritize naming clarity
+* Prefer simple, readable logic
+* Keep code concise and consistent
+
+</summary>
