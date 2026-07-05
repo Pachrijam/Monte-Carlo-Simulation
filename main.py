@@ -1,12 +1,12 @@
 import random
 import math
 import numpy as np
-from calculatePi import monte_carlo_pi, percent_error
+from calculate_pi import monte_carlo_pi, percent_error
 from visualizationPi import visualizePiEstimates, visualizePiPercentError, visualizePiSubplot
 from confidence import confidence_interval
-from calculateInt import monte_carlo_integration as calculate_int
+from calculate_int import monte_carlo_integration as calculate_monte_carlo_integration
 from visualizationInt import visualizeIntEstimates, visualizeIntPercentError, visualizeIntSubplot
-from export import export_pi_results, export_integration_results
+from export_results import export_pi_results, export_integration_results, export_mcmc_results, export_european_option_results
 from calculate_european_options import monte_carlo_european, black_scholes_price
 from calculate_mcmc_bayes import metropolis_hastings, gibbs_sampler, autocorrelation, effective_sample_size, posterior_summary, summarize_chain
 from visualizationMCMC import trace_plot, acf_plot, acf_trace_subplot
@@ -72,7 +72,7 @@ def monte_carlo_integration() -> None:
     while integration_samples > 10000000 or integration_samples <= 0:
         integration_samples = int(input("Please enter a number of samples less than or equal to 10,000,000 and greater than 0."))
         
-    integral_estimate: float = calculate_int(integrand, lower_bound, upper_bound, integration_samples)
+    integral_estimate: float = calculate_monte_carlo_integration(integrand, lower_bound, upper_bound, integration_samples)
     print(f"------------------------------------------------------\nEstimated integral of {function_name} from {lower_bound} to {upper_bound}: {integral_estimate}")
     
     export_int_choice = str(input("------------------------------------------------------\nWould you like to export the integration results? (yes/no): ")).lower()
@@ -207,6 +207,29 @@ def mcmc() -> None:
             trace_plot(samples, var_idx=0, show=True)
         elif trace_vis in ['subplot'] and dim > 0:
             acf_trace_subplot(samples, var_idx=0, show=True)
+        export_choice = str(input("------------------------------------------------------------------------\nWould you like to export the MCMC results? (yes/no): ")).lower()
+        if export_choice in ['yes', 'y']:
+            parameters = {
+                "dimension": dim,
+                "proposal_std": proposal_std,
+                "burn_in": burn_in,
+                "thin": thin
+            }
+            posterior_summary_data = []
+            for i in range(dim):
+                posterior_summary_data.append({
+                    "parameter": f"Dimension {i}",
+                    "mean": mean[i],
+                    "median": np.median(samples[:, i]),
+                    "lower": lower[i],
+                    "upper": upper[i],
+                    "std_dev": np.std(samples[:, i]),
+                    "ci_lower": lower[i],
+                    "ci_upper": upper[i],
+                    "95% CI Lower": lower[i],
+                    "95% CI Upper": upper[i]
+                })
+            export_mcmc_results("Metropolis-Hastings", parameters, num_samples, posterior_summary_data)
     elif mcmc_choice == 2:    
         print("------------------------------------------------------------------------\nYou have selected Gibbs Sampling.")
         dim = int(input("Enter the dimension of the target distribution (e.g., 2): "))
@@ -248,6 +271,28 @@ def mcmc() -> None:
             trace_plot(samples, var_idx=0, show=True)
         elif trace_vis in ['subplot'] and dim > 0:
             acf_trace_subplot(samples, var_idx=0, show=True)
+        export_choice = str(input("------------------------------------------------------------------------\nWould you like to export the MCMC results? (yes/no): ")).lower()
+        if export_choice in ['yes', 'y']:
+            parameters = {
+                "dimension": dim,
+                "burn_in": burn_in,
+                "thin": thin
+            }
+            posterior_summary_data = []
+            for i in range(dim):
+                posterior_summary_data.append({
+                    "parameter": f"Dimension {i}",
+                    "mean": mean[i],
+                    "median": np.median(samples[:, i]),
+                    "lower": lower[i],
+                    "upper": upper[i],
+                    "std_dev": np.std(samples[:, i]),
+                    "ci_lower": lower[i],
+                    "ci_upper": upper[i],
+                    "95% CI Lower": lower[i],
+                    "95% CI Upper": upper[i]
+                })
+            export_mcmc_results("Gibbs Sampling", parameters, num_samples, posterior_summary_data)
     elif mcmc_choice == 3:
         print("------------------------------------------------------------------------\nExiting MCMC methods.")
 
@@ -309,6 +354,9 @@ def european_options() -> None:
 
     print(f"------------------------------------------------------\nMonte Carlo estimated price: {mc_price} (SE: {mc_se})")
     print(f"Black-Scholes closed-form price: {bs_price}")
+    export_choice = str(input("------------------------------------------------------------------------\nWould you like to export the European option results? (yes/no): ")).lower()
+    if export_choice in ['yes', 'y']:
+        export_european_option_results(S0, K, T, r, sigma, n_sim, mc_price)
 
 
 def main() -> None:
