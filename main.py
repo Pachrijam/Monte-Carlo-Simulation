@@ -8,8 +8,10 @@ from calculate_int import monte_carlo_integration as calculate_monte_carlo_integ
 from visualizationInt import visualizeIntEstimates, visualizeIntPercentError, visualizeIntSubplot
 from export_results import export_pi_results, export_integration_results, export_mcmc_results, export_european_option_results
 from calculate_european_options import monte_carlo_european, black_scholes_price
-from calculate_mcmc_bayes import metropolis_hastings, gibbs_sampler, autocorrelation, effective_sample_size, posterior_summary, summarize_chain
+from calculate_mcmc_bayes import metropolis_hastings, gibbs_sampler, effective_sample_size, posterior_summary, summarize_chain
+from calculate_pde_sde import monte_carlo_pde_solution, monte_carlo_sde_expectation
 from visualizationMCMC import trace_plot, acf_plot, acf_trace_subplot
+from visualizationPDE_SDE import visualize_pde_solution, visualize_sde_paths, visualize_pde_sde_subplot
 
 
 def get_menu_choice() -> int:
@@ -299,7 +301,74 @@ def mcmc() -> None:
 
 def pde_sde() -> None:
     print("You have selected option 7: PDE and SDE Solvers.")
-    print("This feature is under development.")
+    solver_type = input("------------------------------------------------------------------------\nSelect a solver type [PDE/SDE]: ").strip().lower()
+    if solver_type not in ['pde', 'sde']:
+        print("Invalid solver type. Please enter 'PDE' or 'SDE'.")
+        return
+
+    if solver_type == 'pde':
+        pde_functions = {
+            '1': ("exp(-x^2)", lambda x: np.exp(-(x ** 2))),
+            '2': ("x^2", lambda x: x ** 2),
+            '3': ("sin(x)", lambda x: np.sin(x)),
+            '4': ("cos(x)", lambda x: np.cos(x)),
+        }
+        print("Choose an initial condition:")
+        for key, (name, _) in pde_functions.items():
+            print(f"{key}. {name}")
+        function_choice = input("Enter the number of the function: ").strip()
+        while function_choice not in pde_functions:
+            function_choice = input("Please enter a valid function number: ").strip()
+        function_name, initial_condition = pde_functions[function_choice]
+        x0 = float(input("Enter the spatial point x0: "))
+        time_horizon = float(input("Enter the time horizon T: "))
+        while time_horizon <= 0:
+            time_horizon = float(input("Please enter a positive time horizon: "))
+        sigma = float(input("Enter the diffusion coefficient sigma [1.0]: ") or "1.0")
+        while sigma <= 0:
+            sigma = float(input("Please enter a positive diffusion coefficient: "))
+        n_paths = int(input("Enter the number of Monte Carlo paths [20000]: ") or "20000")
+        while n_paths <= 0:
+            n_paths = int(input("Please enter a positive number of Monte Carlo paths: "))
+        seed_input = input("Enter random seed or leave blank for random: ").strip()
+        seed = int(seed_input) if seed_input.isdigit() else None
+
+        estimate, std_error = monte_carlo_pde_solution(initial_condition, x0, time_horizon, n_paths, sigma=sigma, seed=seed)
+        print(f"------------------------------------------------------\nPDE Monte Carlo estimate for {function_name} at x={x0}, T={time_horizon}: {estimate:.6f} (SE: {std_error:.6f})")
+        visualization_choice = input("Would you like to visualize the PDE result? (pde/subplot/no): ").strip().lower()
+        while visualization_choice not in ['pde', 'subplot', 'no', 'n']:
+            visualization_choice = input("Please enter 'pde', 'subplot', or 'no': ").strip().lower()
+        if visualization_choice == 'pde':
+            visualize_pde_solution(initial_condition, x0, time_horizon, n_paths, sigma=sigma, seed=seed)
+        elif visualization_choice == 'subplot':
+            visualize_pde_sde_subplot(initial_condition, x0, time_horizon, n_paths, sigma=sigma, seed=seed)
+    elif solver_type == 'sde':
+        initial_value = float(input("Enter the initial value X0: "))
+        drift = float(input("Enter the drift coefficient mu [0.0]: ") or "0.0")
+        diffusion = float(input("Enter the diffusion coefficient sigma [1.0]: ") or "1.0")
+        while diffusion <= 0:
+            diffusion = float(input("Please enter a positive diffusion coefficient: "))
+        time_horizon = float(input("Enter the time horizon T: "))
+        while time_horizon <= 0:
+            time_horizon = float(input("Please enter a positive time horizon: "))
+        n_steps = int(input("Enter the number of time steps [100]: ") or "100")
+        while n_steps <= 0:
+            n_steps = int(input("Please enter a positive number of time steps: "))
+        n_paths = int(input("Enter the number of Monte Carlo paths [20000]: ") or "20000")
+        while n_paths <= 0:
+            n_paths = int(input("Please enter a positive number of Monte Carlo paths: "))
+        seed_input = input("Enter random seed or leave blank for random: ").strip()
+        seed = int(seed_input) if seed_input.isdigit() else None
+
+        estimate, std_error = monte_carlo_sde_expectation(initial_value, drift, diffusion, time_horizon, n_steps, n_paths, seed=seed)
+        print(f"------------------------------------------------------\nSDE Monte Carlo estimate at T={time_horizon}: {estimate:.6f} (SE: {std_error:.6f})")
+        visualization_choice = input("Would you like to visualize the SDE result? (sde/subplot/no): ").strip().lower()
+        while visualization_choice not in ['sde', 'subplot', 'no', 'n']:
+            visualization_choice = input("Please enter 'sde', 'subplot', or 'no': ").strip().lower()
+        if visualization_choice == 'sde':
+            visualize_sde_paths(initial_value, drift, diffusion, time_horizon, n_steps, n_paths, seed=seed)
+        elif visualization_choice == 'subplot':
+            visualize_pde_sde_subplot(lambda x: np.exp(-(x ** 2)), 0.0, time_horizon, n_paths, sigma=diffusion, initial_value=initial_value, drift=drift, diffusion=diffusion, n_steps=n_steps, seed=seed)
 
 
 def sequential_monte_carlo() -> None:
