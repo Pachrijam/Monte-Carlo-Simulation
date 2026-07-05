@@ -10,7 +10,6 @@ def _get_summary_value(summary, *keys, default=""):
             return summary[key]
     return default
 
-
 def export_pi_results(num_samples, pi_estimate, error_percentage, confidence_data, filename=None):
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -183,3 +182,40 @@ def export_european_option_results(S, K, T, r, sigma, num_simulations, option_pr
         writer.writerow(["Number of Simulations", num_simulations])
         writer.writerow(["Option Price Estimate", option_price_estimate])
     print(f"Results exported to {csv_file}")
+    
+def export_pde_sde_results(solver_type, parameters, num_samples, results_summary, filename=None):
+    if filename is None:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"{solver_type}_results_{timestamp}"
+    
+    results_dir = Path("results")
+    results_dir.mkdir(exist_ok=True)
+    
+    json_data = {
+        "timestamp": datetime.now().isoformat(),
+        "solver_type": solver_type,
+        "parameters": parameters,
+        "num_samples": num_samples,
+        "results_summary": results_summary
+    }
+    
+    json_file = results_dir / f"{filename}.json"
+    with open(json_file, 'w') as f:
+        json.dump(json_data, f, indent=2)
+    print(f"Results exported to {json_file}")
+    
+    csv_file = results_dir / f"{filename}.csv"
+    with open(csv_file, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(["Metric", "Value"])
+        writer.writerow(["Timestamp", datetime.now().isoformat()])
+        writer.writerow(["Solver Type", solver_type])
+        for param, value in parameters.items():
+            writer.writerow([f"Parameter: {param}", value])
+        writer.writerow(["Number of Samples", num_samples])
+        writer.writerow([])
+        writer.writerow(["Result Metric", "Value"])
+        for metric, value in results_summary.items():
+            writer.writerow([metric, value])
+    print(f"Results exported to {csv_file}")    
+    

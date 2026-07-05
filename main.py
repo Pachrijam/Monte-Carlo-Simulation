@@ -1,4 +1,3 @@
-import random
 import math
 import numpy as np
 from calculate_pi import monte_carlo_pi, percent_error
@@ -6,9 +5,9 @@ from visualizationPi import visualizePiEstimates, visualizePiPercentError, visua
 from confidence import confidence_interval
 from calculate_int import monte_carlo_integration as calculate_monte_carlo_integration
 from visualizationInt import visualizeIntEstimates, visualizeIntPercentError, visualizeIntSubplot
-from export_results import export_pi_results, export_integration_results, export_mcmc_results, export_european_option_results
+from export_results import export_pi_results, export_integration_results, export_mcmc_results, export_european_option_results, export_pde_sde_results
 from calculate_european_options import monte_carlo_european, black_scholes_price
-from calculate_mcmc_bayes import metropolis_hastings, gibbs_sampler, effective_sample_size, posterior_summary, summarize_chain
+from calculate_mcmc_bayes import metropolis_hastings, posterior_summary
 from calculate_pde_sde import monte_carlo_pde_solution, monte_carlo_sde_expectation
 from visualizationMCMC import trace_plot, acf_plot, acf_trace_subplot
 from visualizationPDE_SDE import visualize_pde_solution, visualize_sde_paths, visualize_pde_sde_subplot
@@ -342,6 +341,10 @@ def pde_sde() -> None:
             visualize_pde_solution(initial_condition, x0, time_horizon, n_paths, sigma=sigma, seed=seed)
         elif visualization_choice == 'subplot':
             visualize_pde_sde_subplot(initial_condition, x0, time_horizon, n_paths, sigma=sigma, seed=seed)
+        export_choice = str(input("------------------------------------------------------------------------\nWould you like to export the PDE results? (yes/no): ")).lower()
+        if export_choice in ['yes', 'y']:
+            export_pde_sde_results("PDE", {"function": function_name, "x0": x0, "time_horizon": time_horizon, "n_paths": n_paths, "sigma": sigma}, n_paths, {"estimate": estimate, "std_error": std_error})
+    
     elif solver_type == 'sde':
         initial_value = float(input("Enter the initial value X0: "))
         drift = float(input("Enter the drift coefficient mu [0.0]: ") or "0.0")
@@ -369,6 +372,9 @@ def pde_sde() -> None:
             visualize_sde_paths(initial_value, drift, diffusion, time_horizon, n_steps, n_paths, seed=seed)
         elif visualization_choice == 'subplot':
             visualize_pde_sde_subplot(lambda x: np.exp(-(x ** 2)), 0.0, time_horizon, n_paths, sigma=diffusion, initial_value=initial_value, drift=drift, diffusion=diffusion, n_steps=n_steps, seed=seed)
+        export_choice = str(input("------------------------------------------------------------------------\nWould you like to export the SDE results? (yes/no): ")).lower()
+        if export_choice in ['yes', 'y']:
+            export_pde_sde_results("SDE", {"initial_value": initial_value, "drift": drift, "diffusion": diffusion, "time_horizon": time_horizon, "n_steps": n_steps, "n_paths": n_paths}, n_paths, {"estimate": estimate, "std_error": std_error})
 
 
 def sequential_monte_carlo() -> None:
