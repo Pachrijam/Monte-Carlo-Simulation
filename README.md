@@ -40,4 +40,10 @@ This project is open source and available on GitHub.
   ### Monte Carlo Integration
   - https://youtu.be/0zbLv2k17vU?si=bVJ2NB_j9vA4dzgR
   ### Markov Chains
-  - https://youtu.be/KZeIEiBrT_w?si=WUUBXs1a3AdS_zEl
+  - "Veritasium": https://youtu.be/KZeIEiBrT_w?si=WUUBXs1a3AdS_zEl
+  - "SISL": https://youtu.be/3qodjHRUxAo?si=AwqZTTr_warI1HFc
+  - "DataMListic": https://youtu.be/nndtTssgtZE?si=BSZdz250n0NFnsnx
+  ### Miscellaneous
+  - "The Synthetic Mind": https://youtu.be/WjmNedsX1T0?si=uSVoNJQRyHhcCifr
+  - "Decision Lab": https://youtu.be/psOYFdx838E?si=dRDkmuvgSk-EPnJg
+  - "MIT OpenCourseWare": https://youtu.be/OgO1gpXSUzU?si=iEBuJNuf8liokxNn
