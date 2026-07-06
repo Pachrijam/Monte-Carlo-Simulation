@@ -12,14 +12,14 @@ Monte-Carlo-Simulation/
 │
 ├── main.py
 │
+├── confidence.py
+├── export_results.py
+│
 ├── calculate_european_options.py
 ├── calculate_int.py
 ├── calculate_mcmc_bayes.py
 ├── calculate_pde_sde.py
 ├── calculate_pi.py
-│
-├── confidence.py
-├── export_results.py
 │
 ├── visualizationInt.py
 ├── visualizationMCMC.py
@@ -35,3 +35,9 @@ Monte-Carlo-Simulation/
 This project is open source and available on GitHub.
 
 ## Resources
+  ### Monte Carlo Pi Estimation
+  - https://youtu.be/lY4rSeX8IL4?si=5dUTObqbJ73dSNQc4
+  ### Monte Carlo Integration
+  - https://youtu.be/0zbLv2k17vU?si=bVJ2NB_j9vA4dzgR
+  ### Markov Chains
+  - https://youtu.be/KZeIEiBrT_w?si=WUUBXs1a3AdS_zEl
