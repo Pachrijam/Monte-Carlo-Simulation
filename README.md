@@ -34,7 +34,7 @@ Monte-Carlo-Simulation/
 
 This project is open source and available on GitHub.
 
-## Resources
+## Video Resources
   ### Monte Carlo Pi Estimation
   - "DataMListic": https://youtu.be/lY4rSeX8IL4?si=5dUTObqbJ73dSNQc4
   ### Monte Carlo Integration
@@ -43,6 +43,11 @@ This project is open source and available on GitHub.
   - "Veritasium": https://youtu.be/KZeIEiBrT_w?si=WUUBXs1a3AdS_zEl
   - "SISL": https://youtu.be/3qodjHRUxAo?si=AwqZTTr_warI1HFc
   - "DataMListic": https://youtu.be/nndtTssgtZE?si=BSZdz250n0NFnsnx
+  - "ritvikMath": https://youtu.be/yApmR-c_hKU?si=AhyUATM4EMC-zjJ8
+  ### PDE & SDE
+  - "Jafar Ghazanfarian": https://youtu.be/8w7v_pM6GWM?si=lYTgmc0Xu5afSyeg
+  ### European Options
+  - "QuantPy": https://youtu.be/fk38oX9GsxE?si=6T5Jlrj-Xe1kpNF5
   ### Miscellaneous
   - "The Synthetic Mind": https://youtu.be/WjmNedsX1T0?si=uSVoNJQRyHhcCifr
   - "Decision Lab": https://youtu.be/psOYFdx838E?si=dRDkmuvgSk-EPnJg
