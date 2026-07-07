@@ -36,9 +36,9 @@ This project is open source and available on GitHub.
 
 ## Resources
   ### Monte Carlo Pi Estimation
-  - https://youtu.be/lY4rSeX8IL4?si=5dUTObqbJ73dSNQc4
+  - "DataMListic": https://youtu.be/lY4rSeX8IL4?si=5dUTObqbJ73dSNQc4
   ### Monte Carlo Integration
-  - https://youtu.be/0zbLv2k17vU?si=bVJ2NB_j9vA4dzgR
+  - "lj37": https://youtu.be/0zbLv2k17vU?si=bVJ2NB_j9vA4dzgR
   ### Markov Chains
   - "Veritasium": https://youtu.be/KZeIEiBrT_w?si=WUUBXs1a3AdS_zEl
   - "SISL": https://youtu.be/3qodjHRUxAo?si=AwqZTTr_warI1HFc
