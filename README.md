@@ -31,11 +31,6 @@ Monte-Carlo-Simulation/
 ├── README.md
 ├── LICENSE.md
 ```
-
-## License
-
-This project is open source and available on GitHub.
-
 ## Video Resources
   ### Monte Carlo Pi Estimation
   - "DataMListic": https://youtu.be/lY4rSeX8IL4?si=5dUTObqbJ73dSNQc4
