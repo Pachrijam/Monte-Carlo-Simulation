@@ -219,3 +219,40 @@ def export_pde_sde_results(solver_type, parameters, num_samples, results_summary
             writer.writerow([metric, value])
     print(f"Results exported to {csv_file}")    
     
+def export_rare_event_results(initial_condition, x0, time_horizon, n_paths, threshold, rare_event_probability_estimate, filename=None):
+    if filename is None:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"rare_event_results_{timestamp}"
+    
+    results_dir = Path("results")
+    results_dir.mkdir(exist_ok=True)
+    
+    json_data = {
+        "timestamp": datetime.now().isoformat(),
+        "method": "Monte Carlo Rare Event Probability Estimation",
+        "initial_condition": initial_condition,
+        "x0": x0,
+        "time_horizon": time_horizon,
+        "n_paths": n_paths,
+        "threshold": threshold,
+        "rare_event_probability_estimate": float(rare_event_probability_estimate)
+    }
+    
+    json_file = results_dir / f"{filename}.json"
+    with open(json_file, 'w') as f:
+        json.dump(json_data, f, indent=2)
+    print(f"Results exported to {json_file}")
+    
+    csv_file = results_dir / f"{filename}.csv"
+    with open(csv_file, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(["Metric", "Value"])
+        writer.writerow(["Timestamp", datetime.now().isoformat()])
+        writer.writerow(["Method", "Monte Carlo Rare Event Probability Estimation"])
+        writer.writerow(["Initial Condition", initial_condition])
+        writer.writerow(["x0", x0])
+        writer.writerow(["Time Horizon", time_horizon])
+        writer.writerow(["Number of Paths", n_paths])
+        writer.writerow(["Threshold", threshold])
+        writer.writerow(["Rare Event Probability Estimate", rare_event_probability_estimate])
+    print(f"Results exported to {csv_file}")
