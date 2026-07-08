@@ -2,6 +2,8 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
+#TODO: add estimates graph, error graph, and combined subplot for rare event probability estimation
+
 def visualize_rare_event_probability(initial_condition, x0, time_horizon, n_paths, threshold, sigma=1.0, seed=None, show=True):
     plt.style.use("dark_background")
     estimates = []

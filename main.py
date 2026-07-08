@@ -11,6 +11,8 @@ from calculate_mcmc_bayes import metropolis_hastings, posterior_summary
 from calculate_pde_sde import monte_carlo_pde_solution, monte_carlo_sde_expectation
 from visualizationMCMC import trace_plot, acf_plot, acf_trace_subplot
 from visualizationPDE_SDE import visualize_pde_solution, visualize_sde_paths, visualize_pde_sde_subplot
+from calculate_rare_events import estimate_tail_probability_naive, importance_sampling_normal_tail, cross_entropy_importance_sampling
+from visualizationRareEvents import visualize_rare_event_probability
 
 
 def get_menu_choice() -> int:
@@ -32,8 +34,8 @@ def get_menu_choice() -> int:
 9. Rare event and Tail Risk Simulation
 10. European Option Pricing (Black-Scholes Monte Carlo)
 11. Exit
-------------------------------------------------------------------------""
-    )
+------------------------------------------------------------------------"""
+)
     
     sim_choice = int(input("Enter the number of the simulation you would like to run (1-11): "))
     return sim_choice
@@ -82,7 +84,7 @@ def monte_carlo_integration() -> None:
     if export_int_choice in ['yes', 'y']:
         export_integration_results(function_name, lower_bound, upper_bound, integration_samples, integral_estimate)
     
-    int_vis_choice = str(input("------------------------------------------------------\nWould you like a visualization of the integral estimates, error, or a combined subplot? (Enter 'estimates', [...]").lower()
+    int_vis_choice = str(input("------------------------------------------------------\nWould you like a visualization of the integral estimates, error, or a combined subplot? (Enter 'estimates', 'error', 'subplot' or 'no'): ")).lower()
     while int_vis_choice not in ['estimates', 'error', 'subplot', 'no', 'n']:
         int_vis_choice = str(input("Please enter 'estimates', 'error', 'subplot' or 'no'.")).lower()
     
@@ -124,7 +126,7 @@ def pi_estimation() -> None:
     if export_pi_choice in ['yes', 'y']:
         export_pi_results(num_samples, monte_carlo_result, error_percentage, confidence_intervals)
     
-    visualization_choice = str(input("------------------------------------------------------\nWould you like a visualization of the estimates, error, or a combined subplot? (Enter 'estimates', 'e[...]").lower()
+    visualization_choice = str(input("------------------------------------------------------\nWould you like a visualization of the estimates, error, or a combined subplot? (Enter 'estimates', 'error', 'subplot' or 'no'): ")).lower()
     while visualization_choice not in ['estimates', 'error', 'subplot', 'no', 'n']:
         visualization_choice = str(input("Please enter 'estimates', 'error', 'subplot' or 'no': ")).lower()
     
@@ -153,7 +155,7 @@ def visualizations() -> None:
 8. Sequential Monte Carlo Analysis (particle filters)
 9. Rare event and Tail Risk Simulation
 10. European Option Pricing (Black-Scholes Monte Carlo)
-------------------------------------------------------------------------""
+------------------------------------------------------------------------"""
     )
     visualizations_choice = int(input("Enter the number of the visualization you would like to run (1-10): "))
 
@@ -382,8 +384,9 @@ def sequential_monte_carlo() -> None:
     print("This feature is under development.")
 
 
+#TODO implement visualization and export for rare event simulation
+
 def rare_event() -> None:
-    from calculate_rare_events import estimate_tail_probability_naive, importance_sampling_normal_tail, cross_entropy_importance_sampling
     print("You have selected option 9: Rare event and Tail Risk Simulation.")
     print("1. Naive Monte Carlo tail probability")
     print("2. Importance sampling with fixed tilt")
