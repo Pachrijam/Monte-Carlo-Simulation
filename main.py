@@ -32,7 +32,7 @@ def get_menu_choice() -> int:
 9. Rare event and Tail Risk Simulation
 10. European Option Pricing (Black-Scholes Monte Carlo)
 11. Exit
-------------------------------------------------------------------------"""
+------------------------------------------------------------------------""
     )
     
     sim_choice = int(input("Enter the number of the simulation you would like to run (1-11): "))
@@ -82,7 +82,7 @@ def monte_carlo_integration() -> None:
     if export_int_choice in ['yes', 'y']:
         export_integration_results(function_name, lower_bound, upper_bound, integration_samples, integral_estimate)
     
-    int_vis_choice = str(input("------------------------------------------------------\nWould you like a visualization of the integral estimates, error, or a combined subplot? (Enter 'estimates', 'error', or 'subplot'): ")).lower()
+    int_vis_choice = str(input("------------------------------------------------------\nWould you like a visualization of the integral estimates, error, or a combined subplot? (Enter 'estimates', [...]").lower()
     while int_vis_choice not in ['estimates', 'error', 'subplot', 'no', 'n']:
         int_vis_choice = str(input("Please enter 'estimates', 'error', 'subplot' or 'no'.")).lower()
     
@@ -124,7 +124,7 @@ def pi_estimation() -> None:
     if export_pi_choice in ['yes', 'y']:
         export_pi_results(num_samples, monte_carlo_result, error_percentage, confidence_intervals)
     
-    visualization_choice = str(input("------------------------------------------------------\nWould you like a visualization of the estimates, error, or a combined subplot? (Enter 'estimates', 'error', or 'subplot'): ")).lower()
+    visualization_choice = str(input("------------------------------------------------------\nWould you like a visualization of the estimates, error, or a combined subplot? (Enter 'estimates', 'e[...]").lower()
     while visualization_choice not in ['estimates', 'error', 'subplot', 'no', 'n']:
         visualization_choice = str(input("Please enter 'estimates', 'error', 'subplot' or 'no': ")).lower()
     
@@ -153,7 +153,7 @@ def visualizations() -> None:
 8. Sequential Monte Carlo Analysis (particle filters)
 9. Rare event and Tail Risk Simulation
 10. European Option Pricing (Black-Scholes Monte Carlo)
-------------------------------------------------------------------------"""
+------------------------------------------------------------------------""
     )
     visualizations_choice = int(input("Enter the number of the visualization you would like to run (1-10): "))
 
@@ -228,7 +228,7 @@ def mcmc() -> None:
                     "ci_lower": lower[i],
                     "ci_upper": upper[i],
                     "95% CI Lower": lower[i],
-                    "95% CI Upper": upper[i]
+                    "95% CI Upper": lower[i]
                 })
             export_mcmc_results("Metropolis-Hastings", parameters, num_samples, posterior_summary_data)
     elif mcmc_choice == 2:    
@@ -291,7 +291,7 @@ def mcmc() -> None:
                     "ci_lower": lower[i],
                     "ci_upper": upper[i],
                     "95% CI Lower": lower[i],
-                    "95% CI Upper": upper[i]
+                    "95% CI Upper": lower[i]
                 })
             export_mcmc_results("Gibbs Sampling", parameters, num_samples, posterior_summary_data)
     elif mcmc_choice == 3:
@@ -383,8 +383,61 @@ def sequential_monte_carlo() -> None:
 
 
 def rare_event() -> None:
+    from calculate_rare_events import estimate_tail_probability_naive, importance_sampling_normal_tail, cross_entropy_importance_sampling
     print("You have selected option 9: Rare event and Tail Risk Simulation.")
-    print("This feature is under development.")
+    print("1. Naive Monte Carlo tail probability")
+    print("2. Importance sampling with fixed tilt")
+    print("3. Cross-entropy to find tilt + importance sampling")
+    choice = input("Enter choice (1-3) or 'b' to go back: ").strip().lower()
+    if choice == 'b':
+        return
+    try:
+        threshold = float(input("Enter threshold for the sum of standard normals: ").strip())
+    except Exception:
+        print("Invalid threshold")
+        return
+    try:
+        dim = int(input("Enter number of components (dim) [1]: ").strip() or "1")
+    except Exception:
+        dim = 1
+    try:
+        n_samples = int(input("Enter number of samples [100000]: ").strip() or "100000")
+    except Exception:
+        n_samples = 100000
+    seed_input = input("Enter random seed (integer) or leave blank: ").strip()
+    seed = int(seed_input) if seed_input.isdigit() else None
+    if choice == '1':
+        prob, se = estimate_tail_probability_naive(threshold, n_samples, dim=dim, seed=seed)
+        print(f"Naive Monte Carlo estimate: {prob} (SE: {se})")
+    elif choice == '2':
+        try:
+            tilt = float(input("Enter tilt (positive shift) for importance sampling [threshold/dim]: ").strip() or str(max(0.0, threshold / max(1, dim))))
+        except Exception:
+            tilt = max(0.0, threshold / max(1, dim))
+        prob, se = importance_sampling_normal_tail(threshold, n_samples, dim=dim, tilt=tilt, seed=seed)
+        print(f"Importance sampling estimate (tilt={tilt}): {prob} (SE: {se})")
+    elif choice == '3':
+        try:
+            n_samples_ce = int(input("Enter samples for CE iterations [20000]: ").strip() or "20000")
+        except Exception:
+            n_samples_ce = 20000
+        try:
+            n_samples_final = int(input("Enter final importance sampling samples [100000]: ").strip() or "100000")
+        except Exception:
+            n_samples_final = 100000
+        try:
+            n_iters = int(input("Enter number of CE iterations [10]: ").strip() or "10")
+        except Exception:
+            n_iters = 10
+        try:
+            rho = float(input("Enter elite fraction rho (0.0-1.0) [0.01]: ").strip() or "0.01")
+        except Exception:
+            rho = 0.01
+        prob, se, tilt = cross_entropy_importance_sampling(threshold, n_samples_ce, n_samples_final, dim=dim, n_iters=n_iters, rho=rho, seed=seed)
+        print(f"Cross-entropy found tilt: {tilt}")
+        print(f"CE+Importance sampling estimate: {prob} (SE: {se})")
+    else:
+        print("Invalid selection")
 
 
 def european_options() -> None:
