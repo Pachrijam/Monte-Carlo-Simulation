@@ -15,14 +15,14 @@ Monte-Carlo-Simulation/
 ├── confidence.py
 ├── export_results.py
 │
-├── calculate_european_options.py
+├── calculate_european_options.py  # these files calculate results of each simulation
 ├── calculate_int.py
 ├── calculate_mcmc_bayes.py
 ├── calculate_pde_sde.py
 ├── calculate_pi.py
 ├── calculate_rare_event.py
 │
-├── visualizationInt.py
+├── visualizationInt.py # these files visualize the results of each simulation
 ├── visualizationMCMC.py
 ├── visualizationPDE_SDE.py
 ├── visualizationPi.py
