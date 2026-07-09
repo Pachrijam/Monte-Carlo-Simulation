@@ -439,6 +439,9 @@ def rare_event() -> None:
         prob, se, tilt = cross_entropy_importance_sampling(threshold, n_samples_ce, n_samples_final, dim=dim, n_iters=n_iters, rho=rho, seed=seed)
         print(f"Cross-entropy found tilt: {tilt}")
         print(f"CE+Importance sampling estimate: {prob} (SE: {se})")
+        export_choice = str(input("------------------------------------------------------------------------\nWould you like to export the rare event results? (yes/no): ")).lower()
+        if export_choice in ['yes', 'y']:
+            export_rare_event_results(threshold, dim, n_samples, choice, prob, se, tilt if choice == '3' else None)
     else:
         print("Invalid selection")
 
