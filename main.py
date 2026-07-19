@@ -15,7 +15,6 @@ from calculate_rare_events import estimate_tail_probability_naive, importance_sa
 from visualizationRareEvents import visualize_rare_event_probability
 
 
-
 def get_menu_choice() -> int:
     """
     Display menu and get user's simulation choice.
@@ -385,8 +384,6 @@ def sequential_monte_carlo() -> None:
     print("This feature is under development.")
 
 
-#TODO implement visualization and export for rare event simulation
-
 def rare_event() -> None:
     print("You have selected option 9: Rare event and Tail Risk Simulation.")
     print("1. Naive Monte Carlo tail probability")
@@ -410,8 +407,12 @@ def rare_event() -> None:
         n_samples = 100000
     seed_input = input("Enter random seed (integer) or leave blank: ").strip()
     seed = int(seed_input) if seed_input.isdigit() else None
+    method = "naive"
+    tilt = None
+    n_paths_for_export = n_samples
     if choice == '1':
         prob, se = estimate_tail_probability_naive(threshold, n_samples, dim=dim, seed=seed)
+        method = "naive"
         print(f"Naive Monte Carlo estimate: {prob} (SE: {se})")
     elif choice == '2':
         try:
@@ -419,6 +420,7 @@ def rare_event() -> None:
         except Exception:
             tilt = max(0.0, threshold / max(1, dim))
         prob, se = importance_sampling_normal_tail(threshold, n_samples, dim=dim, tilt=tilt, seed=seed)
+        method = "importance"
         print(f"Importance sampling estimate (tilt={tilt}): {prob} (SE: {se})")
     elif choice == '3':
         try:
@@ -438,13 +440,23 @@ def rare_event() -> None:
         except Exception:
             rho = 0.01
         prob, se, tilt = cross_entropy_importance_sampling(threshold, n_samples_ce, n_samples_final, dim=dim, n_iters=n_iters, rho=rho, seed=seed)
+        method = "cross_entropy"
+        n_paths_for_export = n_samples_final
         print(f"Cross-entropy found tilt: {tilt}")
         print(f"CE+Importance sampling estimate: {prob} (SE: {se})")
-        export_choice = str(input("------------------------------------------------------------------------\nWould you like to export the rare event results? (yes/no): ")).lower()
-        if export_choice in ['yes', 'y']:
-            export_rare_event_results(threshold, dim, n_samples, choice, prob, se, tilt if choice == '3' else None)
     else:
         print("Invalid selection")
+        return
+    export_choice = str(input("------------------------------------------------------------------------\nWould you like to export the rare event results? (yes/no): ")).lower()
+    while export_choice not in ['yes', 'y', 'no', 'n']:
+        export_choice = str(input("Please enter 'yes' or 'no': ")).lower()
+    if export_choice in ['yes', 'y']:
+        export_rare_event_results(0.0, 0.0, 1.0, n_paths_for_export, threshold, prob)
+    visualization_choice = str(input("Would you like to visualize the rare event probability estimate? (yes/no): ")).lower()
+    while visualization_choice not in ['yes', 'y', 'no', 'n']:
+        visualization_choice = str(input("Please enter 'yes' or 'no': ")).lower()
+    if visualization_choice in ['yes', 'y']:
+        visualize_rare_event_probability(0.0, 0.0, 1.0, n_paths_for_export, threshold, sigma=1.0, seed=seed)
 
 
 def european_options() -> None:

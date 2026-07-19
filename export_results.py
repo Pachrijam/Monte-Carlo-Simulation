@@ -3,7 +3,6 @@ import csv
 from datetime import datetime
 from pathlib import Path
 
-
 def _get_summary_value(summary, *keys, default=""):
     for key in keys:
         if key in summary:
