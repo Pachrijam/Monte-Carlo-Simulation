@@ -15,6 +15,7 @@ from calculate_rare_events import estimate_tail_probability_naive, importance_sa
 from visualizationRareEvents import visualize_rare_event_probability
 
 
+
 def get_menu_choice() -> int:
     """
     Display menu and get user's simulation choice.
@@ -24,7 +25,7 @@ def get_menu_choice() -> int:
     """
     print("--------------------------------<<MENU>>--------------------------------\nSELECT AN OPTION FROM BELOW:\n------------------------------------------------------------------------")
     print("""1. Estimate the integral of a function using Monte Carlo integration
-2. Estimate the value of π using the Monte Carlo method
+2. Estimate the value of pi using the Monte Carlo method
 3. Confidence Intervals and Statistical Analysis
 4. Visualizations
 5. Variance Reduction Techniques
@@ -98,8 +99,8 @@ def monte_carlo_integration() -> None:
 
 
 def pi_estimation() -> None:
-    print("You have selected option 2: Estimate the value of π using the Monte Carlo method.")
-    num_samples = int(input("------------------------------------------------------------------------\nEnter the number of samples to estimate π: "))
+    print("You have selected option 2: Estimate the value of pi using the Monte Carlo method.")
+    num_samples = int(input("------------------------------------------------------------------------\nEnter the number of samples to estimate pi: "))
     
     while num_samples > 10000000 or num_samples <= 0:
         num_samples = int(input("Please enter a number of samples less than or equal to 10,000,000 and greater than 0: "))
@@ -118,7 +119,7 @@ def pi_estimation() -> None:
         print(f"Mean: {ci['mean']}")
         print(f"Range: ({ci['lower']}, {ci['upper']})")
     
-    print(f"------------------------------------------------------\nEstimated value of π: {monte_carlo_result}\nPercent error: {error_percentage}%")
+    print(f"------------------------------------------------------\nEstimated value of pi: {monte_carlo_result}\nPercent error: {error_percentage}%")
     
     export_pi_choice = str(input("------------------------------------------------------\nWould you like to export the Pi estimation results? (yes/no): ")).lower()
     while export_pi_choice not in ['yes', 'y', 'no', 'n']:
@@ -146,7 +147,7 @@ def confidence_intervals() -> None:
 def visualizations() -> None:
     print("You have selected option 4: Visualizations. Please select a specific visualization type from the menu.\n------------------------------------------------------------------------")
     print("""1. Estimate the integral of a function using Monte Carlo integration
-2. Estimate the value of π using the Monte Carlo method
+2. Estimate the value of pi using the Monte Carlo method
 3. Confidence Intervals and Statistical Analysis
 4. Visualizations
 5. Variance Reduction Techniques
