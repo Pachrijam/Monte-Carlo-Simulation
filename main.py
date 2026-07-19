@@ -3,7 +3,7 @@ import numpy as np
 from calculate_pi import monte_carlo_pi, percent_error
 from visualizationPi import visualizePiEstimates, visualizePiPercentError, visualizePiSubplot
 from confidence import confidence_interval
-from calculate_int import monte_carlo_integration as calculate_monte_carlo_integration
+from calculate_int import calculate_monte_carlo_integration
 from visualizationInt import visualizeIntEstimates, visualizeIntPercentError, visualizeIntSubplot
 from export_results import export_pi_results, export_integration_results, export_mcmc_results, export_european_option_results, export_pde_sde_results, export_rare_event_results
 from calculate_european_options import monte_carlo_european, black_scholes_price

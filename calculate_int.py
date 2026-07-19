@@ -1,6 +1,6 @@
 import numpy as np
 
-def monte_carlo_integration(func, a, b, n):
+def calculate_monte_carlo_integration(func, a, b, n):
     x = np.random.uniform(a, b, n)
 
     try:
