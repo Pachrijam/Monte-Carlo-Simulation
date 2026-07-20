@@ -8,7 +8,7 @@ def _get_summary_value(summary, *keys, default=""):
             return summary[key]
     return default
 
-def export_pi_results(num_samples, pi_estimate, error_percentage, confidence_data, filename=None):
+def export_pi_results_csv(num_samples, pi_estimate, error_percentage, confidence_data, filename=None):
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"pi_results_{timestamp}"
@@ -37,7 +37,7 @@ def export_pi_results(num_samples, pi_estimate, error_percentage, confidence_dat
             ])
     print(f"Results exported to {csv_file}")
     
-def export_mcmc_results(method_name, parameters, num_samples, posterior_summary_data, filename=None):
+def export_mcmc_results_csv(method_name, parameters, num_samples, posterior_summary_data, filename=None):
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"mcmc_results_{timestamp}"
@@ -67,7 +67,7 @@ def export_mcmc_results(method_name, parameters, num_samples, posterior_summary_
             ])
     print(f"Results exported to {csv_file}")    
     
-def export_integration_results(function_name, lower_bound, upper_bound, num_samples, integral_estimate, filename=None):
+def export_integration_results_csv(function_name, lower_bound, upper_bound, num_samples, integral_estimate, filename=None):
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"integration_results_{timestamp}"
@@ -88,7 +88,7 @@ def export_integration_results(function_name, lower_bound, upper_bound, num_samp
         writer.writerow(["Integral Estimate", integral_estimate])
     print(f"Results exported to {csv_file}") 
  
-def export_european_option_results(S, K, T, r, sigma, num_simulations, option_price_estimate, filename=None):
+def export_european_option_results_csv(S, K, T, r, sigma, num_simulations, option_price_estimate, filename=None):
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"european_option_results_{timestamp}"
@@ -111,7 +111,7 @@ def export_european_option_results(S, K, T, r, sigma, num_simulations, option_pr
         writer.writerow(["Option Price Estimate", option_price_estimate])
     print(f"Results exported to {csv_file}")    
     
-def export_pde_sde_results(solver_type, parameters, num_samples, results_summary, filename=None):
+def export_pde_sde_results_csv(solver_type, parameters, num_samples, results_summary, filename=None):
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"{solver_type}_results_{timestamp}"
@@ -134,7 +134,7 @@ def export_pde_sde_results(solver_type, parameters, num_samples, results_summary
             writer.writerow([metric, value])
     print(f"Results exported to {csv_file}")
     
-def export_rare_event_results(initial_condition, x0, time_horizon, n_paths, threshold, rare_event_probability_estimate, filename=None):
+def export_rare_event_results_csv(initial_condition, x0, time_horizon, n_paths, threshold, rare_event_probability_estimate, filename=None):
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"rare_event_results_{timestamp}"
