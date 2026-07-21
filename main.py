@@ -27,14 +27,13 @@ def get_menu_choice() -> int:
     print("""1. Estimate the integral of a function using Monte Carlo integration
 2. Estimate the value of pi using the Monte Carlo method
 3. Confidence Intervals and Statistical Analysis
-4. Visualizations
-5. Variance Reduction Techniques
-6. Markov Chain Monte Carlo (MCMC) Methods
-7. PDE and SDE Solvers
-8. Sequential Monte Carlo Analysis (particle filters)
-9. Rare event and Tail Risk Simulation
-10. European Option Pricing (Black-Scholes Monte Carlo)
-11. Exit
+4. Variance Reduction Techniques
+5. Markov Chain Monte Carlo (MCMC) Methods
+6. PDE and SDE Solvers
+7. Sequential Monte Carlo Analysis (particle filters)
+8. Rare event and Tail Risk Simulation
+9. European Option Pricing (Black-Scholes Monte Carlo)
+10. Exit
 ------------------------------------------------------------------------"""
 )
     
@@ -144,23 +143,6 @@ def pi_estimation() -> None:
 
 def confidence_intervals() -> None:
     print("You have selected option 3: Confidence Intervals and Statistical Analysis.")
-
-
-def visualizations() -> None:
-    print("You have selected option 4: Visualizations. Please select a specific visualization type from the menu.\n------------------------------------------------------------------------")
-    print("""1. Estimate the integral of a function using Monte Carlo integration
-2. Estimate the value of pi using the Monte Carlo method
-3. Confidence Intervals and Statistical Analysis
-4. Visualizations
-5. Variance Reduction Techniques
-6. Markov Chain Monte Carlo (MCMC) Methods
-7. PDE and SDE Solvers
-8. Sequential Monte Carlo Analysis (particle filters)
-9. Rare event and Tail Risk Simulation
-10. European Option Pricing (Black-Scholes Monte Carlo)
-------------------------------------------------------------------------"""
-    )
-    visualizations_choice = int(input("Enter the number of the visualization you would like to run (1-10): "))
 
 
 def variance_reduction() -> None:
@@ -518,8 +500,7 @@ def european_options() -> None:
 def main() -> None:
     while True:
         sim_choice: int = get_menu_choice()
-        
-        if sim_choice == 11:
+        if sim_choice == 10:
             print("------------------------------------------------------------------------\nExiting the program. Thank you!")
             break
         elif sim_choice == 1:
@@ -529,21 +510,19 @@ def main() -> None:
         elif sim_choice == 3:
             confidence_intervals()
         elif sim_choice == 4:
-            visualizations()
-        elif sim_choice == 5:
             variance_reduction()
-        elif sim_choice == 6:
+        elif sim_choice == 5:
             mcmc()
-        elif sim_choice == 7:
+        elif sim_choice == 6:
             pde_sde()
-        elif sim_choice == 8:
+        elif sim_choice == 7:
             sequential_monte_carlo()
-        elif sim_choice == 9:
+        elif sim_choice == 8:
             rare_event()
-        elif sim_choice == 10:
+        elif sim_choice == 9:
             european_options()
         else:
-            print("Invalid choice. Please select a number between 1 and 11.")
+            print("Invalid choice. Please select a number between 1 and 10.")
 
 
 if __name__ == "__main__":
