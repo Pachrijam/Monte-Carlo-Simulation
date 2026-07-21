@@ -1,92 +1,125 @@
-# Copilot instructions for this workspace
+# Copilot Instructions for This Workspace
 
 Follow these rules for all code generated or modified in this repository.
 
 ## <code_style>
 
 * Do not include comments of any kind.
-* This includes single-line comments, block comments, and docstrings.
-* Do not use triple-quoted strings as explanations.
-  </code_style>
+* Do not use docstrings or explanatory strings.
+* Code must be self-explanatory through structure and naming alone.
 
-## <clarity>
+## </code_style>
 
-* Use clear, descriptive variable and function names.
-* Write code that is self-explanatory without relying on comments.
-* Prefer simple and direct logic over complex abstractions.
+## <performance_>
 
-  </clarity>
+* Prioritize performance over readability when there is a tradeoff.
+* Prefer NumPy vectorized operations over Python loops.
+* Avoid unnecessary allocations, copies, or intermediate structures.
+* Eliminate redundant computation.
+* Use efficient random sampling methods suited for Monte Carlo simulations.
+* Only use parallelism when it provides clear performance gains.
 
-## <readability>
+## </performance_>
 
-* Keep code concise and clean.
-* Avoid unnecessary verbosity or redundant structures.
-* Ensure the purpose of the code is immediately understandable.
+## <clarity_>
 
-  </readability>
+* Use clear, descriptive names for variables and functions.
+* Avoid abbreviations unless they are standard (e.g., np, arr).
+* Keep logic direct and minimal.
 
-## <consistency>
+## </clarity_>
 
-* Maintain consistent naming conventions across files.
-* Use predictable function and variable patterns.
-* Keep formatting uniform throughout the project.
+## <simplicity>
 
-  </consistency>
+* Avoid unnecessary abstraction, classes, or indirection.
+* Prefer straightforward functional implementations.
+* Do not over-engineer solutions.
+
+## </simplicity_>
+
+## <consistency_>
+
+* Maintain consistent naming patterns across the project.
+* Keep formatting uniform.
+* Reuse patterns that already exist in the codebase.
+
+## </consistency_>
+
+## <scope_control>
+
+* Only read, modify, or reference files that are explicitly mentioned.
+* Do not infer or assume the contents of unmentioned files.
+* Do not introduce changes outside the requested scope.
+
+## </scope_control>
+
+## <verification_>
+
+* After generating or modifying code, verify correctness using the terminal.
+* Run relevant scripts, modules, or entry points to ensure execution succeeds.
+* Check for runtime errors, incorrect outputs, and performance regressions.
+* Prefer quick, direct execution commands over complex testing setups.
+* Do not assume correctness without execution.
+
+## </verification_>
 
 ## <one_shot_example>
 
 Bad:
 
-```
-def f(x):
-    return x * 3
+```id="w1r2kt"
+def process(data):
+    result = []
+    for i in data:
+        result.append(i * i)
+    return result
 ```
 
 Good:
 
-```
-def multiply_by_three(value):
-    return value * 3
+```id="q7jv3c"
+def square_values(values):
+    return values * values
 ```
 
 Bad:
 
-```
-def calc(a, b):
-    return a / b
+```id="6b3nfd"
+total = 0
+for i in range(n):
+    total += x
 ```
 
 Good:
 
-```
-def divide(numerator, denominator):
-    return numerator / denominator
+```id="n5p8xs"
+total = x * n
 ```
 
 Bad:
 
-```
-def process(d):
-    r = []
-    for i in d:
-        r.append(i * 2)
-    return r
+```id="t2m4ha"
+samples = []
+for _ in range(n):
+    samples.append(random.random())
 ```
 
 Good:
 
-```
-def double_values(values):
-    return [value * 2 for value in values]
+```id="k8z1dv"
+samples = np.random.random(n)
 ```
 
-</one_shot_example>
+## </one_shot_example>
 
-## summary
+## <summary_>
 
 * No comments ever
-* Prioritize naming clarity
-* Prefer simple, readable logic
+* Performance-first
+* Prefer vectorization
+* Avoid unnecessary complexity
+* Respect file scope strictly
+* Verify using terminal execution
 * Keep code concise and consistent
 
-</summary>
+## </summary_>
