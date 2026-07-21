@@ -1,4 +1,3 @@
-import math
 import numpy as np
 import matplotlib.pyplot as plt
 from calculate_rare_events import estimate_rare_event_probability
