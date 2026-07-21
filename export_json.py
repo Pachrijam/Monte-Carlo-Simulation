@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-def export_pi_results_json(num_samples, pi_estimate, error_percentage, confidence_data, filename=None):
+def pi_results_json(num_samples, pi_estimate, error_percentage, confidence_data, filename=None):
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"pi_results_{timestamp}"
@@ -26,7 +26,7 @@ def export_pi_results_json(num_samples, pi_estimate, error_percentage, confidenc
         json.dump(json_data, f, indent=2)
     print(f"Results exported to {json_file}")
 
-def export_mcmc_results_json(method_name, parameters, num_samples, posterior_summary_data, filename=None):
+def mcmc_results_json(method_name, parameters, num_samples, posterior_summary_data, filename=None):
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"mcmc_results_{timestamp}"
@@ -49,7 +49,7 @@ def export_mcmc_results_json(method_name, parameters, num_samples, posterior_sum
         json.dump(json_data, f, indent=2)
     print(f"Results exported to {json_file}")
 
-def export_integration_results_json(function_name, lower_bound, upper_bound, num_samples, integral_estimate, filename=None):
+def integration_results_json(function_name, lower_bound, upper_bound, num_samples, integral_estimate, filename=None):
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"integration_results_{timestamp}"
@@ -74,7 +74,7 @@ def export_integration_results_json(function_name, lower_bound, upper_bound, num
         json.dump(json_data, f, indent=2)
     print(f"Results exported to {json_file}")
 
-def export_european_option_results_json(S, K, T, r, sigma, num_simulations, option_price_estimate, filename=None):
+def european_option_results_json(S, K, T, r, sigma, num_simulations, option_price_estimate, filename=None):
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"european_option_results_{timestamp}"
@@ -101,7 +101,7 @@ def export_european_option_results_json(S, K, T, r, sigma, num_simulations, opti
         json.dump(json_data, f, indent=2)
     print(f"Results exported to {json_file}")
     
-def export_pde_sde_results_json(solver_type, parameters, num_samples, results_summary, filename=None):
+def pde_sde_results_json(solver_type, parameters, num_samples, results_summary, filename=None):
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"{solver_type}_results_{timestamp}"
@@ -122,7 +122,7 @@ def export_pde_sde_results_json(solver_type, parameters, num_samples, results_su
         json.dump(json_data, f, indent=2)
     print(f"Results exported to {json_file}")
     
-def export_rare_event_results_json(initial_condition, x0, time_horizon, n_paths, threshold, rare_event_probability_estimate, filename=None):
+def rare_event_results_json(initial_condition, x0, time_horizon, n_paths, threshold, rare_event_probability_estimate, filename=None):
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"rare_event_results_{timestamp}"

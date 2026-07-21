@@ -2,11 +2,11 @@ import math
 import numpy as np
 from calculate_pi import monte_carlo_pi, percent_error
 from visualizationPi import visualizePiEstimates, visualizePiPercentError, visualizePiSubplot
-from confidence import confidence_interval
+from calculate_confidence import confidence_interval
 from calculate_int import calculate_monte_carlo_integration
 from visualizationInt import visualizeIntEstimates, visualizeIntPercentError, visualizeIntSubplot
-from export_json import export_pi_results_json, export_integration_results_json, export_mcmc_results_json, export_european_option_results_json, export_pde_sde_results_json, export_rare_event_results_json
-from export_csv import export_pi_results_csv, export_integration_results_csv, export_mcmc_results_csv, export_european_option_results_csv, export_pde_sde_results_csv, export_rare_event_results_csv
+from export_json import pi_results_json, integration_results_json, mcmc_results_json, european_option_results_json, pde_sde_results_json, rare_event_results_json
+from export_csv import pi_results_csv, integration_results_csv, mcmc_results_csv, european_option_results_csv, pde_sde_results_csv, rare_event_results_csv
 from calculate_european_options import monte_carlo_european, black_scholes_price
 from calculate_mcmc_bayes import metropolis_hastings, posterior_summary
 from calculate_pde_sde import monte_carlo_pde_solution, monte_carlo_sde_expectation
@@ -83,8 +83,8 @@ def monte_carlo_integration() -> None:
     while export_int_choice not in ['yes', 'y', 'no', 'n']:
         export_int_choice = str(input("Please enter 'yes' or 'no'.")).lower()
     if export_int_choice in ['yes', 'y']:
-        export_integration_results_json(function_name, lower_bound, upper_bound, integration_samples, integral_estimate)
-        export_integration_results_csv(function_name, lower_bound, upper_bound, integration_samples, integral_estimate)
+        integration_results_json(function_name, lower_bound, upper_bound, integration_samples, integral_estimate)
+        integration_results_csv(function_name, lower_bound, upper_bound, integration_samples, integral_estimate)
     
     int_vis_choice = str(input("------------------------------------------------------\nWould you like a visualization of the integral estimates, error, or a combined subplot? (Enter 'estimates', 'error', 'subplot' or 'no'): ")).lower()
     while int_vis_choice not in ['estimates', 'error', 'subplot', 'no', 'n']:
@@ -126,8 +126,8 @@ def pi_estimation() -> None:
     while export_pi_choice not in ['yes', 'y', 'no', 'n']:
         export_pi_choice = str(input("Please enter 'yes' or 'no'.")).lower()
     if export_pi_choice in ['yes', 'y']:
-        export_pi_results_json(num_samples, monte_carlo_result, error_percentage, confidence_intervals)
-        export_pi_results_csv(num_samples, monte_carlo_result, error_percentage, confidence_intervals)
+        pi_results_json(num_samples, monte_carlo_result, error_percentage, confidence_intervals)
+        pi_results_csv(num_samples, monte_carlo_result, error_percentage, confidence_intervals)
     
     visualization_choice = str(input("------------------------------------------------------\nWould you like a visualization of the estimates, error, or a combined subplot? (Enter 'estimates', 'error', 'subplot' or 'no'): ")).lower()
     while visualization_choice not in ['estimates', 'error', 'subplot', 'no', 'n']:
@@ -235,8 +235,8 @@ def mcmc() -> None:
                     "95% CI Lower": lower[i],
                     "95% CI Upper": lower[i]
                 })
-            export_mcmc_results_json("Metropolis-Hastings", parameters, num_samples, posterior_summary_data)
-            export_mcmc_results_csv("Metropolis-Hastings", parameters, num_samples, posterior_summary_data)
+            mcmc_results_json("Metropolis-Hastings", parameters, num_samples, posterior_summary_data)
+            mcmc_results_csv("Metropolis-Hastings", parameters, num_samples, posterior_summary_data)
     elif mcmc_choice == 2:    
         print("------------------------------------------------------------------------\nYou have selected Gibbs Sampling.")
         dim = int(input("Enter the dimension of the target distribution (e.g., 2): "))
@@ -299,8 +299,8 @@ def mcmc() -> None:
                     "95% CI Lower": lower[i],
                     "95% CI Upper": lower[i]
                 })
-            export_mcmc_results_json("Gibbs Sampling", parameters, num_samples, posterior_summary_data)
-            export_mcmc_results_csv("Gibbs Sampling", parameters, num_samples, posterior_summary_data)
+            mcmc_results_json("Gibbs Sampling", parameters, num_samples, posterior_summary_data)
+            mcmc_results_csv("Gibbs Sampling", parameters, num_samples, posterior_summary_data)
     elif mcmc_choice == 3:
         print("------------------------------------------------------------------------\nExiting MCMC methods.")
 
@@ -350,8 +350,8 @@ def pde_sde() -> None:
             visualize_pde_sde_subplot(initial_condition, x0, time_horizon, n_paths, sigma=sigma, seed=seed)
         export_choice = str(input("------------------------------------------------------------------------\nWould you like to export the PDE results? (yes/no): ")).lower()
         if export_choice in ['yes', 'y']:
-            export_pde_sde_results_json("PDE", {"function": function_name, "x0": x0, "time_horizon": time_horizon, "n_paths": n_paths, "sigma": sigma}, n_paths, {"estimate": estimate, "std_error": std_error})
-            export_pde_sde_results_csv("PDE", {"function": function_name, "x0": x0, "time_horizon": time_horizon, "n_paths": n_paths, "sigma": sigma}, n_paths, {"estimate": estimate, "std_error": std_error})
+            pde_sde_results_json("PDE", {"function": function_name, "x0": x0, "time_horizon": time_horizon, "n_paths": n_paths, "sigma": sigma}, n_paths, {"estimate": estimate, "std_error": std_error})
+            pde_sde_results_csv("PDE", {"function": function_name, "x0": x0, "time_horizon": time_horizon, "n_paths": n_paths, "sigma": sigma}, n_paths, {"estimate": estimate, "std_error": std_error})
     
     elif solver_type == 'sde':
         initial_value = float(input("Enter the initial value X0: "))
@@ -382,8 +382,8 @@ def pde_sde() -> None:
             visualize_pde_sde_subplot(lambda x: np.exp(-(x ** 2)), 0.0, time_horizon, n_paths, sigma=diffusion, initial_value=initial_value, drift=drift, diffusion=diffusion, n_steps=n_steps, seed=seed)
         export_choice = str(input("------------------------------------------------------------------------\nWould you like to export the SDE results? (yes/no): ")).lower()
         if export_choice in ['yes', 'y']:
-            export_pde_sde_results_json("SDE", {"initial_value": initial_value, "drift": drift, "diffusion": diffusion, "time_horizon": time_horizon, "n_steps": n_steps, "n_paths": n_paths}, n_paths, {"estimate": estimate, "std_error": std_error})
-            export_pde_sde_results_csv("SDE", {"initial_value": initial_value, "drift": drift, "diffusion": diffusion, "time_horizon": time_horizon, "n_steps": n_steps, "n_paths": n_paths}, n_paths, {"estimate": estimate, "std_error": std_error})
+            pde_sde_results_json("SDE", {"initial_value": initial_value, "drift": drift, "diffusion": diffusion, "time_horizon": time_horizon, "n_steps": n_steps, "n_paths": n_paths}, n_paths, {"estimate": estimate, "std_error": std_error})
+            pde_sde_results_csv("SDE", {"initial_value": initial_value, "drift": drift, "diffusion": diffusion, "time_horizon": time_horizon, "n_steps": n_steps, "n_paths": n_paths}, n_paths, {"estimate": estimate, "std_error": std_error})
 
 
 def sequential_monte_carlo() -> None:
@@ -458,8 +458,8 @@ def rare_event() -> None:
     while export_choice not in ['yes', 'y', 'no', 'n']:
         export_choice = str(input("Please enter 'yes' or 'no': ")).lower()
     if export_choice in ['yes', 'y']:
-        export_rare_event_results_json(0.0, 0.0, 1.0, n_paths_for_export, threshold, prob)
-        export_rare_event_results_csv(0.0, 0.0, 1.0, n_paths_for_export, threshold, prob)
+        rare_event_results_json(0.0, 0.0, 1.0, n_paths_for_export, threshold, prob)
+        rare_event_results_csv(0.0, 0.0, 1.0, n_paths_for_export, threshold, prob)
     visualization_choice = str(input("Would you like to visualize the rare event probability estimate? (yes/no): ")).lower()
     while visualization_choice not in ['yes', 'y', 'no', 'n']:
         visualization_choice = str(input("Please enter 'yes' or 'no': ")).lower()
@@ -511,8 +511,8 @@ def european_options() -> None:
     print(f"Black-Scholes closed-form price: {bs_price}")
     export_choice = str(input("------------------------------------------------------------------------\nWould you like to export the European option results? (yes/no): ")).lower()
     if export_choice in ['yes', 'y']:
-        export_european_option_results_json(S0, K, T, r, sigma, n_sim, mc_price)
-        export_european_option_results_csv(S0, K, T, r, sigma, n_sim, mc_price)
+        european_option_results_json(S0, K, T, r, sigma, n_sim, mc_price)
+        european_option_results_csv(S0, K, T, r, sigma, n_sim, mc_price)
 
 
 def main() -> None:
