@@ -12,7 +12,6 @@ Monte-Carlo-Simulation/
 │
 ├── main.py
 │
-├── confidence.py
 │
 ├── export_json.py                     # exports results of each simulation as json 
 ├── export_csv.py                      # exports results of each simulation as csv
@@ -23,6 +22,7 @@ Monte-Carlo-Simulation/
 ├── calculate_pde_sde.py
 ├── calculate_pi.py
 ├── calculate_rare_event.py
+├── calculate_confidence.py
 │
 ├── visualizationInt.py                # visualizes results of each simulation using matplotlib
 ├── visualizationMCMC.py
