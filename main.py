@@ -26,18 +26,17 @@ def get_menu_choice() -> int:
     print("--------------------------------<<MENU>>--------------------------------\nSELECT AN OPTION FROM BELOW:\n------------------------------------------------------------------------")
     print("""1. Estimate the integral of a function using Monte Carlo integration
 2. Estimate the value of pi using the Monte Carlo method
-3. Confidence Intervals and Statistical Analysis
-4. Variance Reduction Techniques
-5. Markov Chain Monte Carlo (MCMC) Methods
-6. PDE and SDE Solvers
-7. Sequential Monte Carlo Analysis (particle filters)
-8. Rare event and Tail Risk Simulation
-9. European Option Pricing (Black-Scholes Monte Carlo)
-10. Exit
+3. Variance Reduction Techniques
+4. Markov Chain Monte Carlo (MCMC) Methods
+5. PDE and SDE Solvers
+6. Sequential Monte Carlo Analysis (particle filters)
+7. Rare event and Tail Risk Simulation
+8. European Option Pricing (Black-Scholes Monte Carlo)
+9. Exit
 ------------------------------------------------------------------------"""
 )
     
-    sim_choice = int(input("Enter the number of the simulation you would like to run (1-11): "))
+    sim_choice = int(input("Enter the number of the simulation you would like to run (1-9): "))
     return sim_choice
 
 
@@ -139,10 +138,6 @@ def pi_estimation() -> None:
             visualizePiPercentError(num_samples)
         elif visualization_choice == 'subplot':
             visualizePiSubplot(num_samples)
-
-
-def confidence_intervals() -> None:
-    print("You have selected option 3: Confidence Intervals and Statistical Analysis.")
 
 
 def variance_reduction() -> None:
@@ -508,18 +503,16 @@ def main() -> None:
         elif sim_choice == 2:
             pi_estimation()
         elif sim_choice == 3:
-            confidence_intervals()
-        elif sim_choice == 4:
             variance_reduction()
-        elif sim_choice == 5:
+        elif sim_choice == 4:
             mcmc()
-        elif sim_choice == 6:
+        elif sim_choice == 5:
             pde_sde()
-        elif sim_choice == 7:
+        elif sim_choice == 6:
             sequential_monte_carlo()
-        elif sim_choice == 8:
+        elif sim_choice == 7:
             rare_event()
-        elif sim_choice == 9:
+        elif sim_choice == 8:
             european_options()
         else:
             print("Invalid choice. Please select a number between 1 and 10.")
