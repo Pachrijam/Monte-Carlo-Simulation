@@ -14,15 +14,11 @@ from visualizationMCMC import trace_plot, acf_plot, acf_trace_subplot
 from visualizationPDE_SDE import visualize_pde_solution, visualize_sde_paths, visualize_pde_sde_subplot
 from calculate_rare_events import estimate_tail_probability_naive, importance_sampling_normal_tail, cross_entropy_importance_sampling
 from visualizationRareEvents import visualize_rare_event_probability
+from calculate_sequential import linear_gaussian_filter, nonlinear_tracking_filter, state_estimate, state_variance
+from visualizationSequential import visualize_particle_trajectories, visualize_particle_weights, visualize_effective_sample_size, visualize_sequential_subplot
 
 
 def get_menu_choice() -> int:
-    """
-    Display menu and get user's simulation choice.
-    
-    Returns:
-        int: User's menu selection (1-11)
-    """
     print("--------------------------------<<MENU>>--------------------------------\nSELECT AN OPTION FROM BELOW:\n------------------------------------------------------------------------")
     print("""1. Estimate the integral of a function using Monte Carlo integration
 2. Estimate the value of pi using the Monte Carlo method
@@ -33,8 +29,7 @@ def get_menu_choice() -> int:
 7. Rare event and Tail Risk Simulation
 8. European Option Pricing (Black-Scholes Monte Carlo)
 9. Exit
-------------------------------------------------------------------------"""
-)
+------------------------------------------------------------------------""")
     
     sim_choice = int(input("Enter the number of the simulation you would like to run (1-9): "))
     return sim_choice
@@ -84,7 +79,7 @@ def monte_carlo_integration() -> None:
         integration_results_json(function_name, lower_bound, upper_bound, integration_samples, integral_estimate)
         integration_results_csv(function_name, lower_bound, upper_bound, integration_samples, integral_estimate)
     
-    int_vis_choice = str(input("------------------------------------------------------\nWould you like a visualization of the integral estimates, error, or a combined subplot? (Enter 'estimates', 'error', 'subplot' or 'no'): ")).lower()
+    int_vis_choice = str(input("------------------------------------------------------\nWould you like a visualization of the integral estimates, error, or a combined subplot? (Enter 'estimates', 'error', 'subplot', or 'no'): ")).lower()
     while int_vis_choice not in ['estimates', 'error', 'subplot', 'no', 'n']:
         int_vis_choice = str(input("Please enter 'estimates', 'error', 'subplot' or 'no'.")).lower()
     
@@ -127,7 +122,7 @@ def pi_estimation() -> None:
         pi_results_json(num_samples, monte_carlo_result, error_percentage, confidence_intervals)
         pi_results_csv(num_samples, monte_carlo_result, error_percentage, confidence_intervals)
     
-    visualization_choice = str(input("------------------------------------------------------\nWould you like a visualization of the estimates, error, or a combined subplot? (Enter 'estimates', 'error', 'subplot' or 'no'): ")).lower()
+    visualization_choice = str(input("------------------------------------------------------\nWould you like a visualization of the estimates, error, or a combined subplot? (Enter 'estimates', 'error', 'subplot', or 'no'): ")).lower()
     while visualization_choice not in ['estimates', 'error', 'subplot', 'no', 'n']:
         visualization_choice = str(input("Please enter 'estimates', 'error', 'subplot' or 'no': ")).lower()
     
@@ -356,7 +351,7 @@ def pde_sde() -> None:
         if visualization_choice == 'sde':
             visualize_sde_paths(initial_value, drift, diffusion, time_horizon, n_steps, n_paths, seed=seed)
         elif visualization_choice == 'subplot':
-            visualize_pde_sde_subplot(lambda x: np.exp(-(x ** 2)), 0.0, time_horizon, n_paths, sigma=diffusion, initial_value=initial_value, drift=drift, diffusion=diffusion, n_steps=n_steps, seed=seed)
+            visualize_pde_sde_subplot(lambda x: np.exp(-(x ** 2)), 0.0, time_horizon, n_paths, sigma=diffusion, seed=seed)
         export_choice = str(input("------------------------------------------------------------------------\nWould you like to export the SDE results? (yes/no): ")).lower()
         if export_choice in ['yes', 'y']:
             pde_sde_results_json("SDE", {"initial_value": initial_value, "drift": drift, "diffusion": diffusion, "time_horizon": time_horizon, "n_steps": n_steps, "n_paths": n_paths}, n_paths, {"estimate": estimate, "std_error": std_error})
@@ -364,8 +359,95 @@ def pde_sde() -> None:
 
 
 def sequential_monte_carlo() -> None:
-    print("You have selected option 8: Sequential Monte Carlo Analysis (particle filters).")
-    print("This feature is under development.")
+    print("You have selected option 6: Sequential Monte Carlo Analysis (particle filters).")
+    print("------------------------------------------------------------------------\nSelect a filter model to run:")
+    print("""1. Linear Gaussian Filter
+2. Nonlinear Tracking Filter
+3. Exit""")
+    smc_choice = int(input("Enter the number of the filter model (1-3): "))
+    
+    if smc_choice == 1:
+        print("------------------------------------------------------------------------\nYou have selected Linear Gaussian Filter.")
+        n_particles = int(input("Enter the number of particles [1000]: ") or "1000")
+        while n_particles <= 0:
+            n_particles = int(input("Please enter a positive number of particles: "))
+        n_steps = int(input("Enter the number of time steps [50]: ") or "50")
+        while n_steps <= 0:
+            n_steps = int(input("Please enter a positive number of time steps: "))
+        F = float(input("Enter the state transition coefficient F [1.0]: ") or "1.0")
+        Q = float(input("Enter the process noise variance Q [1.0]: ") or "1.0")
+        while Q <= 0:
+            Q = float(input("Please enter a positive process noise variance: "))
+        R = float(input("Enter the measurement noise variance R [1.0]: ") or "1.0")
+        while R <= 0:
+            R = float(input("Please enter a positive measurement noise variance: "))
+        seed_input = input("Enter random seed or leave blank for random: ").strip()
+        seed = int(seed_input) if seed_input.isdigit() else None
+        
+        true_state = 1.0
+        observations = [true_state + np.sqrt(R) * np.random.randn() for _ in range(n_steps)]
+        
+        particle_history, weight_history = linear_gaussian_filter(observations, n_particles, F=F, Q=Q, R=R, seed=seed)
+        
+        print(f"------------------------------------------------------------------------\nLinear Gaussian Filter completed.")
+        final_estimate = state_estimate(particle_history[-1], weight_history[-1])
+        final_variance = state_variance(particle_history[-1], weight_history[-1], final_estimate)
+        print(f"Final state estimate: {final_estimate:.6f}")
+        print(f"Final state variance: {final_variance:.6f}")
+        
+        vis_choice = str(input("------------------------------------------------------------------------\nWould you like to visualize the filter results? (trajectories/weights/ess/subplot/no): ")).lower()
+        while vis_choice not in ['trajectories', 'weights', 'ess', 'subplot', 'no', 'n']:
+            vis_choice = str(input("Please enter 'trajectories', 'weights', 'ess', 'subplot', or 'no': ")).lower()
+        if vis_choice == 'trajectories':
+            visualize_particle_trajectories(particle_history, weight_history, observations)
+        elif vis_choice == 'weights':
+            visualize_particle_weights(weight_history)
+        elif vis_choice == 'ess':
+            visualize_effective_sample_size(weight_history)
+        elif vis_choice == 'subplot':
+            visualize_sequential_subplot(particle_history, weight_history, observations)
+    
+    elif smc_choice == 2:
+        print("------------------------------------------------------------------------\nYou have selected Nonlinear Tracking Filter.")
+        n_particles = int(input("Enter the number of particles [1000]: ") or "1000")
+        while n_particles <= 0:
+            n_particles = int(input("Please enter a positive number of particles: "))
+        n_steps = int(input("Enter the number of time steps [50]: ") or "50")
+        while n_steps <= 0:
+            n_steps = int(input("Please enter a positive number of time steps: "))
+        seed_input = input("Enter random seed or leave blank for random: ").strip()
+        seed = int(seed_input) if seed_input.isdigit() else None
+        
+        true_states = np.zeros(n_steps)
+        observations = np.zeros(n_steps)
+        x = 0.1
+        for t in range(n_steps):
+            x = 0.5 * x + 25.0 * x / (1.0 + x ** 2) + 8.0 * np.cos(1.2 * (t + 1)) + np.sqrt(10) * np.random.randn()
+            true_states[t] = x
+            observations[t] = x ** 2 / 20.0 + np.random.randn()
+        
+        particle_history, weight_history = nonlinear_tracking_filter(observations, n_particles, seed=seed)
+        
+        print(f"------------------------------------------------------------------------\nNonlinear Tracking Filter completed.")
+        final_estimate = state_estimate(particle_history[-1], weight_history[-1])
+        final_variance = state_variance(particle_history[-1], weight_history[-1], final_estimate)
+        print(f"Final state estimate: {final_estimate:.6f}")
+        print(f"Final state variance: {final_variance:.6f}")
+        
+        vis_choice = str(input("------------------------------------------------------------------------\nWould you like to visualize the filter results? (trajectories/weights/ess/subplot/no): ")).lower()
+        while vis_choice not in ['trajectories', 'weights', 'ess', 'subplot', 'no', 'n']:
+            vis_choice = str(input("Please enter 'trajectories', 'weights', 'ess', 'subplot', or 'no': ")).lower()
+        if vis_choice == 'trajectories':
+            visualize_particle_trajectories(particle_history, weight_history, observations)
+        elif vis_choice == 'weights':
+            visualize_particle_weights(weight_history)
+        elif vis_choice == 'ess':
+            visualize_effective_sample_size(weight_history)
+        elif vis_choice == 'subplot':
+            visualize_sequential_subplot(particle_history, weight_history, observations)
+    
+    elif smc_choice == 3:
+        print("------------------------------------------------------------------------\nExiting Sequential Monte Carlo analysis.")
 
 
 def rare_event() -> None:
@@ -495,7 +577,7 @@ def european_options() -> None:
 def main() -> None:
     while True:
         sim_choice: int = get_menu_choice()
-        if sim_choice == 10:
+        if sim_choice == 9:
             print("------------------------------------------------------------------------\nExiting the program. Thank you!")
             break
         elif sim_choice == 1:
@@ -515,7 +597,7 @@ def main() -> None:
         elif sim_choice == 8:
             european_options()
         else:
-            print("Invalid choice. Please select a number between 1 and 10.")
+            print("Invalid choice. Please select a number between 1 and 9.")
 
 
 if __name__ == "__main__":
