@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 
 def visualize_particle_trajectories(particle_history, weight_history, observations=None, show=True):
+    plt.style.use('dark_background')
     n_steps = len(particle_history)
     n_particles = len(particle_history[0])
     
@@ -19,11 +20,11 @@ def visualize_particle_trajectories(particle_history, weight_history, observatio
     if observations is not None:
         ax.plot(range(len(observations)), observations, 'g*', markersize=8, label='Observations')
     
-    ax.set_xlabel('Time')
-    ax.set_ylabel('State Value')
-    ax.set_title('Particle Filter: State Trajectories')
+    ax.set_xlabel('Time', fontsize=14)
+    ax.set_ylabel('State Value', fontsize=14)
+    ax.set_title('Particle Filter: State Trajectories', fontsize=16, fontweight='bold')
     ax.legend()
-    ax.grid(True, alpha=0.3)
+    plt.grid(color='gray', linestyle='-', linewidth=0.5, alpha=0.2)
     
     if show:
         plt.tight_layout()
@@ -33,6 +34,7 @@ def visualize_particle_trajectories(particle_history, weight_history, observatio
 
 
 def visualize_particle_weights(weight_history, show=True):
+    plt.style.use('dark_background')
     n_steps = len(weight_history)
     weight_means = [np.mean(weight_history[t]) for t in range(n_steps)]
     weight_stds = [np.std(weight_history[t]) for t in range(n_steps)]
@@ -50,7 +52,7 @@ def visualize_particle_weights(weight_history, show=True):
     ax.set_ylabel('Particle Weight')
     ax.set_title('Particle Weights Over Time')
     ax.legend()
-    ax.grid(True, alpha=0.3)
+    plt.grid(color='gray', linestyle='-', linewidth=0.5, alpha=0.2)
     
     if show:
         plt.tight_layout()
@@ -60,6 +62,7 @@ def visualize_particle_weights(weight_history, show=True):
 
 
 def visualize_effective_sample_size(weight_history, show=True):
+    plt.style.use('dark_background')
     n_steps = len(weight_history)
     n_particles = len(weight_history[0])
     ess = [1.0 / np.sum(weight_history[t] ** 2) for t in range(n_steps)]
@@ -76,7 +79,7 @@ def visualize_effective_sample_size(weight_history, show=True):
     ax.set_title('Effective Sample Size Ratio')
     ax.set_ylim([0, 1.1])
     ax.legend()
-    ax.grid(True, alpha=0.3)
+    plt.grid(color='gray', linestyle='-', linewidth=0.5, alpha=0.2)
     
     if show:
         plt.tight_layout()
@@ -86,6 +89,7 @@ def visualize_effective_sample_size(weight_history, show=True):
 
 
 def visualize_sequential_subplot(particle_history, weight_history, observations=None, show=True):
+    plt.style.use('dark_background')
     fig, axes = plt.subplots(3, 1, figsize=(14, 10))
     
     n_steps = len(particle_history)
@@ -105,6 +109,7 @@ def visualize_sequential_subplot(particle_history, weight_history, observations=
     axes[0].set_title('Particle Trajectories & Estimates')
     axes[0].legend()
     axes[0].grid(True, alpha=0.3)
+    plt.grid(color='gray', linestyle='-', linewidth=0.5, alpha=0.2)
     
     weight_means = [np.mean(weight_history[t]) for t in range(n_steps)]
     weight_stds = [np.std(weight_history[t]) for t in range(n_steps)]
@@ -116,6 +121,7 @@ def visualize_sequential_subplot(particle_history, weight_history, observations=
     axes[1].set_ylabel('Weight')
     axes[1].set_title('Particle Weights')
     axes[1].grid(True, alpha=0.3)
+    plt.grid(color='gray', linestyle='-', linewidth=0.5, alpha=0.2)
     
     ess = [1.0 / np.sum(weight_history[t] ** 2) for t in range(n_steps)]
     ess_ratio = [e / n_particles for e in ess]
@@ -127,6 +133,7 @@ def visualize_sequential_subplot(particle_history, weight_history, observations=
     axes[2].set_title('Effective Sample Size Ratio')
     axes[2].set_ylim([0, 1.1])
     axes[2].grid(True, alpha=0.3)
+    plt.grid(color='gray', linestyle='-', linewidth=0.5, alpha=0.2)
     
     if show:
         plt.tight_layout()
