@@ -495,7 +495,7 @@ def european_options() -> None:
 def main() -> None:
     while True:
         sim_choice: int = get_menu_choice()
-        if sim_choice == 10:
+        if sim_choice == 9:
             print("------------------------------------------------------------------------\nExiting the program. Thank you!")
             break
         elif sim_choice == 1:
