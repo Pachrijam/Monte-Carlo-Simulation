@@ -5,8 +5,8 @@ from visualizationPi import visualizePiEstimates, visualizePiPercentError, visua
 from calculate_confidence import confidence_interval
 from calculate_int import calculate_monte_carlo_integration
 from visualizationInt import visualizeIntEstimates, visualizeIntPercentError, visualizeIntSubplot
-from export_json import pi_results_json, integration_results_json, mcmc_results_json, european_option_results_json, pde_sde_results_json, rare_event_results_json
-from export_csv import pi_results_csv, integration_results_csv, mcmc_results_csv, european_option_results_csv, pde_sde_results_csv, rare_event_results_csv
+from export_json import pi_results_json, integration_results_json, mcmc_results_json, european_option_results_json, pde_sde_results_json, rare_event_results_json, sequential_results_json
+from export_csv import pi_results_csv, integration_results_csv, mcmc_results_csv, european_option_results_csv, pde_sde_results_csv, rare_event_results_csv, sequential_results_csv
 from calculate_european_options import monte_carlo_european, black_scholes_price
 from calculate_mcmc_bayes import metropolis_hastings, posterior_summary
 from calculate_pde_sde import monte_carlo_pde_solution, monte_carlo_sde_expectation
@@ -362,9 +362,8 @@ def sequential_monte_carlo() -> None:
     print("You have selected option 6: Sequential Monte Carlo Analysis (particle filters).")
     print("------------------------------------------------------------------------\nSelect a filter model to run:")
     print("""1. Linear Gaussian Filter
-2. Nonlinear Tracking Filter
-3. Exit""")
-    smc_choice = int(input("Enter the number of the filter model (1-3): "))
+2. Nonlinear Tracking Filter""")
+    smc_choice = int(input("Enter the number of the filter model (1-2): "))
     
     if smc_choice == 1:
         print("------------------------------------------------------------------------\nYou have selected Linear Gaussian Filter.")
@@ -406,6 +405,12 @@ def sequential_monte_carlo() -> None:
             visualize_effective_sample_size(weight_history)
         elif vis_choice == 'subplot':
             visualize_sequential_subplot(particle_history, weight_history, observations)
+        export_option = str(input("------------------------------------------------------------------------\nWould you like to export the filter results? (yes/no): ")).lower()
+        while export_option not in ['yes', 'y', 'no', 'n']:
+            export_option = str(input("Please enter 'yes' or 'no': ")).lower()
+        if export_option in ['yes', 'y']:
+            sequential_results_json("Nonlinear Tracking Filter", {"n_particles": n_particles, "n_steps": n_steps}, len(particle_history), {"final_estimate": final_estimate, "final_variance": final_variance})
+            sequential_results_csv("Nonlinear Tracking Filter", {"n_particles": n_particles, "n_steps": n_steps}, len(particle_history), {"final_estimate": final_estimate, "final_variance": final_variance})
     
     elif smc_choice == 2:
         print("------------------------------------------------------------------------\nYou have selected Nonlinear Tracking Filter.")
@@ -445,9 +450,14 @@ def sequential_monte_carlo() -> None:
             visualize_effective_sample_size(weight_history)
         elif vis_choice == 'subplot':
             visualize_sequential_subplot(particle_history, weight_history, observations)
-    
-    elif smc_choice == 3:
-        print("------------------------------------------------------------------------\nExiting Sequential Monte Carlo analysis.")
+        export_option = str(input("------------------------------------------------------------------------\nWould you like to export the filter results? (yes/no): ")).lower()
+        while export_option not in ['yes', 'y', 'no', 'n']:
+            export_option = str(input("Please enter 'yes' or 'no': ")).lower()
+        if export_option in ['yes', 'y']:
+            sequential_results_json("Nonlinear Tracking Filter", {"n_particles": n_particles, "n_steps": n_steps}, len(particle_history), {"final_estimate": final_estimate, "final_variance": final_variance})
+            sequential_results_csv("Nonlinear Tracking Filter", {"n_particles": n_particles, "n_steps": n_steps}, len(particle_history), {"final_estimate": final_estimate, "final_variance": final_variance})
+    else:
+        print("Invalid selection. Please try again.")
 
 
 def rare_event() -> None:

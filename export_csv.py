@@ -154,4 +154,27 @@ def rare_event_results_csv(initial_condition, x0, time_horizon, n_paths, thresho
         writer.writerow(["Number of Paths", n_paths])
         writer.writerow(["Threshold", threshold])
         writer.writerow(["Rare Event Probability Estimate", rare_event_probability_estimate])
-    print(f"Results exported to {csv_file}")     
+    print(f"Results exported to {csv_file}")
+    
+def sequential_results_csv(method_name, parameters, num_samples, results_summary, filename=None):
+    if filename is None:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"sequential_results_{timestamp}"
+
+    results_dir = Path("results")
+    results_dir.mkdir(exist_ok=True)
+
+    csv_file = results_dir / f"{filename}.csv"
+    with open(csv_file, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(["Metric", "Value"])
+        writer.writerow(["Timestamp", datetime.now().isoformat()])
+        writer.writerow(["Method", method_name])
+        for param, value in parameters.items():
+            writer.writerow([f"Parameter: {param}", value])
+        writer.writerow(["Number of Samples", num_samples])
+        writer.writerow([])
+        writer.writerow(["Result Metric", "Value"])
+        for metric, value in results_summary.items():
+            writer.writerow([metric, value])
+    print(f"Results exported to {csv_file}")

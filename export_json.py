@@ -145,3 +145,24 @@ def rare_event_results_json(initial_condition, x0, time_horizon, n_paths, thresh
     with open(json_file, 'w') as f:
         json.dump(json_data, f, indent=2)
     print(f"Results exported to {json_file}")
+    
+def sequential_results_json(method_name, parameters, num_samples, results_summary, filename=None):
+    if filename is None:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"sequential_results_{timestamp}"
+
+    results_dir = Path("results")
+    results_dir.mkdir(exist_ok=True)
+
+    json_data = {
+        "timestamp": datetime.now().isoformat(),
+        "method": method_name,
+        "parameters": parameters,
+        "num_samples": num_samples,
+        "results_summary": results_summary
+    }
+
+    json_file = results_dir / f"{filename}.json"
+    with open(json_file, 'w') as f:
+        json.dump(json_data, f, indent=2)
+    print(f"Results exported to {json_file}")
