@@ -166,3 +166,24 @@ def sequential_results_json(method_name, parameters, num_samples, results_summar
     with open(json_file, 'w') as f:
         json.dump(json_data, f, indent=2)
     print(f"Results exported to {json_file}")
+
+def variance_results_json(method_name, parameters, num_samples, variance_estimate, filename=None):
+    if filename is None:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"variance_results_{timestamp}"
+
+    results_dir = Path("results")
+    results_dir.mkdir(exist_ok=True)
+
+    json_data = {
+        "timestamp": datetime.now().isoformat(),
+        "method": method_name,
+        "parameters": parameters,
+        "num_samples": num_samples,
+        "variance_estimate": float(variance_estimate)
+    }
+
+    json_file = results_dir / f"{filename}.json"
+    with open(json_file, 'w') as f:
+        json.dump(json_data, f, indent=2)
+    print(f"Results exported to {json_file}")

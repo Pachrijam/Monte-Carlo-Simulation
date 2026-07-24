@@ -178,3 +178,23 @@ def sequential_results_csv(method_name, parameters, num_samples, results_summary
         for metric, value in results_summary.items():
             writer.writerow([metric, value])
     print(f"Results exported to {csv_file}")
+    
+def variance_results_csv(method_name, parameters, num_samples, variance_estimate, filename=None):
+    if filename is None:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"variance_results_{timestamp}"
+
+    results_dir = Path("results")
+    results_dir.mkdir(exist_ok=True)
+
+    csv_file = results_dir / f"{filename}.csv"
+    with open(csv_file, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(["Metric", "Value"])
+        writer.writerow(["Timestamp", datetime.now().isoformat()])
+        writer.writerow(["Method", method_name])
+        for param, value in parameters.items():
+            writer.writerow([f"Parameter: {param}", value])
+        writer.writerow(["Number of Samples", num_samples])
+        writer.writerow(["Variance Estimate", variance_estimate])
+    print(f"Results exported to {csv_file}")
