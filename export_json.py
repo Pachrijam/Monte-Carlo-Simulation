@@ -7,10 +7,8 @@ def pi_results_json(num_samples, pi_estimate, error_percentage, confidence_data,
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"pi_results_{timestamp}"
     
-    
     results_dir = Path("results")
     results_dir.mkdir(exist_ok=True)
-    
     
     json_data = {
         "timestamp": datetime.now().isoformat(),
@@ -31,10 +29,8 @@ def mcmc_results_json(method_name, parameters, num_samples, posterior_summary_da
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"mcmc_results_{timestamp}"
     
-    
     results_dir = Path("results")
     results_dir.mkdir(exist_ok=True)
-    
     
     json_data = {
         "timestamp": datetime.now().isoformat(),
@@ -53,12 +49,10 @@ def integration_results_json(function_name, lower_bound, upper_bound, num_sample
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"integration_results_{timestamp}"
-    
-    
+
     results_dir = Path("results")
     results_dir.mkdir(exist_ok=True)
-    
-    
+        
     json_data = {
         "timestamp": datetime.now().isoformat(),
         "method": "Monte Carlo Integration",
