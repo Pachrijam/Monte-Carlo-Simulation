@@ -18,6 +18,84 @@ from calculate_sequential import linear_gaussian_filter, nonlinear_tracking_filt
 from visualizationSequential import visualize_particle_trajectories, visualize_particle_weights, visualize_effective_sample_size, visualize_sequential_subplot
 
 
+def safe_int(prompt: str, min_val: int = None, max_val: int = None) -> int:
+    while True:
+        try:
+            value = int(input(prompt))
+            if min_val is not None and value < min_val:
+                raise ValueError(f"Value must be at least {min_val}")
+            if max_val is not None and value > max_val:
+                raise ValueError(f"Value must be at most {max_val}")
+            return value
+        except ValueError as e:
+            print(f"Invalid input: {e}")
+
+
+def safe_float(prompt: str, min_val: float = None, max_val: float = None) -> float:
+    while True:
+        try:
+            value = float(input(prompt))
+            if min_val is not None and value < min_val:
+                raise ValueError(f"Value must be at least {min_val}")
+            if max_val is not None and value > max_val:
+                raise ValueError(f"Value must be at most {max_val}")
+            return value
+        except ValueError as e:
+            print(f"Invalid input: {e}")
+
+
+def safe_choice(prompt: str, valid_options: list) -> str:
+    while True:
+        try:
+            value = input(prompt).strip().lower()
+            if value not in valid_options:
+                raise ValueError(f"Please enter one of: {', '.join(valid_options)}")
+            return value
+        except ValueError as e:
+            print(f"Invalid input: {e}")
+
+
+def safe_optional_int(prompt: str, default: int = None) -> int:
+    while True:
+        try:
+            value_str = input(prompt).strip()
+            if not value_str:
+                if default is not None:
+                    return default
+                raise ValueError("Input required")
+            value = int(value_str)
+            return value
+        except ValueError as e:
+            print(f"Invalid input: {e}")
+
+
+def safe_optional_float(prompt: str, default: float = None) -> float:
+    while True:
+        try:
+            value_str = input(prompt).strip()
+            if not value_str:
+                if default is not None:
+                    return default
+                raise ValueError("Input required")
+            value = float(value_str)
+            return value
+        except ValueError as e:
+            print(f"Invalid input: {e}")
+
+
+def safe_seed_input(prompt: str) -> int:
+    while True:
+        try:
+            value_str = input(prompt).strip()
+            if not value_str:
+                return None
+            if not value_str.isdigit():
+                raise ValueError("Seed must be a non-negative integer")
+            return int(value_str)
+        except ValueError as e:
+            print(f"Invalid input: {e}")
+
+
 def get_menu_choice() -> int:
     print("--------------------------------<<MENU>>--------------------------------\nSELECT AN OPTION FROM BELOW:\n------------------------------------------------------------------------")
     print("""1. Estimate the integral of a function using Monte Carlo integration
@@ -31,7 +109,7 @@ def get_menu_choice() -> int:
 9. Exit
 ------------------------------------------------------------------------""")
     
-    sim_choice = int(input("Enter the number of the simulation you would like to run (1-9): "))
+    sim_choice = safe_int("Enter the number of the simulation you would like to run (1-9): ", min_val=1, max_val=9)
     return sim_choice
 
 
@@ -50,38 +128,29 @@ def monte_carlo_integration() -> None:
     print("------------------------------------------------------------------------\nChoose a function to integrate:")
     for key, (name, _) in integrand_functions.items():
         print(f"{key}. {name}")
-    function_choice = input("Enter the number of the function: ").strip()
-    
-    while function_choice not in integrand_functions:
-        print("Please enter a valid function number.")
-        function_choice = input("Enter the number of the function: ").strip()
+    function_choice = safe_choice("Enter the number of the function: ", list(integrand_functions.keys()))
     
     function_name: str
     integrand: callable
     function_name, integrand = integrand_functions[function_choice]
     
-    lower_bound = float(input("Enter the lower bound of the integral: "))
-    upper_bound = float(input("Enter the upper bound of the integral: "))
+    lower_bound = safe_float("Enter the lower bound of the integral: ")
+    upper_bound = safe_float("Enter the upper bound of the integral: ")
     while upper_bound <= lower_bound:
-        upper_bound = float(input("Upper bound must be greater than lower bound. Enter the upper bound: "))
+        print("Upper bound must be greater than lower bound.")
+        upper_bound = safe_float("Enter the upper bound: ")
     
-    integration_samples = int(input("Enter the number of samples for the integral estimate: "))
-    while integration_samples > 10000000 or integration_samples <= 0:
-        integration_samples = int(input("Please enter a number of samples less than or equal to 10,000,000 and greater than 0."))
+    integration_samples = safe_int("Enter the number of samples for the integral estimate: ", min_val=1, max_val=10000000)
         
     integral_estimate: float = calculate_monte_carlo_integration(integrand, lower_bound, upper_bound, integration_samples)
     print(f"------------------------------------------------------\nEstimated integral of {function_name} from {lower_bound} to {upper_bound}: {integral_estimate}")
     
-    export_int_choice = str(input("------------------------------------------------------\nWould you like to export the integration results? (yes/no): ")).lower()
-    while export_int_choice not in ['yes', 'y', 'no', 'n']:
-        export_int_choice = str(input("Please enter 'yes' or 'no'.")).lower()
+    export_int_choice = safe_choice("------------------------------------------------------\nWould you like to export the integration results? (yes/no): ", ['yes', 'y', 'no', 'n'])
     if export_int_choice in ['yes', 'y']:
         integration_results_json(function_name, lower_bound, upper_bound, integration_samples, integral_estimate)
         integration_results_csv(function_name, lower_bound, upper_bound, integration_samples, integral_estimate)
     
-    int_vis_choice = str(input("------------------------------------------------------\nWould you like a visualization of the integral estimates, error, or a combined subplot? (Enter 'estimates', 'error', 'subplot', or 'no'): ")).lower()
-    while int_vis_choice not in ['estimates', 'error', 'subplot', 'no', 'n']:
-        int_vis_choice = str(input("Please enter 'estimates', 'error', 'subplot' or 'no'.")).lower()
+    int_vis_choice = safe_choice("------------------------------------------------------\nWould you like a visualization of the integral estimates, error, or a combined subplot? (Enter 'estimates', 'error', 'subplot', or 'no'): ", ['estimates', 'error', 'subplot', 'no', 'n'])
     
     if int_vis_choice in ['estimates', 'error', 'subplot']:
         if int_vis_choice == 'estimates':
@@ -94,10 +163,8 @@ def monte_carlo_integration() -> None:
 
 def pi_estimation() -> None:
     print("You have selected option 2: Estimate the value of pi using the Monte Carlo method.")
-    num_samples = int(input("------------------------------------------------------------------------\nEnter the number of samples to estimate pi: "))
+    num_samples = safe_int("------------------------------------------------------------------------\nEnter the number of samples to estimate pi: ", min_val=1, max_val=10000000)
     
-    while num_samples > 10000000 or num_samples <= 0:
-        num_samples = int(input("Please enter a number of samples less than or equal to 10,000,000 and greater than 0: "))
     monte_carlo_result: float = monte_carlo_pi(num_samples)
     error_percentage: float = percent_error(num_samples)
     
@@ -115,16 +182,12 @@ def pi_estimation() -> None:
     
     print(f"------------------------------------------------------\nEstimated value of pi: {monte_carlo_result}\nPercent error: {error_percentage}%")
     
-    export_pi_choice = str(input("------------------------------------------------------\nWould you like to export the Pi estimation results? (yes/no): ")).lower()
-    while export_pi_choice not in ['yes', 'y', 'no', 'n']:
-        export_pi_choice = str(input("Please enter 'yes' or 'no'.")).lower()
+    export_pi_choice = safe_choice("------------------------------------------------------\nWould you like to export the Pi estimation results? (yes/no): ", ['yes', 'y', 'no', 'n'])
     if export_pi_choice in ['yes', 'y']:
         pi_results_json(num_samples, monte_carlo_result, error_percentage, confidence_intervals)
         pi_results_csv(num_samples, monte_carlo_result, error_percentage, confidence_intervals)
     
-    visualization_choice = str(input("------------------------------------------------------\nWould you like a visualization of the estimates, error, or a combined subplot? (Enter 'estimates', 'error', 'subplot', or 'no'): ")).lower()
-    while visualization_choice not in ['estimates', 'error', 'subplot', 'no', 'n']:
-        visualization_choice = str(input("Please enter 'estimates', 'error', 'subplot' or 'no': ")).lower()
+    visualization_choice = safe_choice("------------------------------------------------------\nWould you like a visualization of the estimates, error, or a combined subplot? (Enter 'estimates', 'error', 'subplot', or 'no'): ", ['estimates', 'error', 'subplot', 'no', 'n'])
     
     if visualization_choice in ['estimates', 'error', 'subplot']:
         if visualization_choice == 'estimates':
@@ -146,26 +209,19 @@ def mcmc() -> None:
     print("""1. Metropolis-Hastings
 2. Gibbs Sampling
 3. Exit""")
-    mcmc_choice = int(input("Enter the number of the MCMC method you would like to run (1-3): "))
+    mcmc_choice = safe_int("Enter the number of the MCMC method you would like to run (1-3): ", min_val=1, max_val=3)
     if mcmc_choice == 1:
         print("------------------------------------------------------------------------\nYou have selected Metropolis-Hastings.")
         def log_normal(x: np.ndarray) -> float:
             return -0.5 * np.sum(x ** 2) - (len(x) / 2) * np.log(2 * np.pi)
-        dim = int(input("Enter the dimension of the target distribution (e.g., 2): "))
-        while dim <= 0:
-            dim = int(input("Please enter a positive integer for the dimension: "))
-        num_samples = int(input("Enter the number of samples to generate (e.g., 1000): "))
-        while num_samples <= 0 or num_samples > 1000000:
-            num_samples = int(input("Please enter a positive integer less than or equal to 1,000,000 for the number of samples: "))
-        proposal_std = float(input("Enter the standard deviation for the proposal distribution (e.g., 1.0): "))
-        while proposal_std <= 0:
-            proposal_std = float(input("Please enter a positive value for the standard deviation: "))
-        burn_in = int(input("Enter the number of burn-in samples (e.g., 100): "))
-        while burn_in < 0 or burn_in >= num_samples:
-            burn_in = int(input("Please enter a non-negative integer less than the number of samples for burn-in: "))
-        thin = int(input("Enter the thinning interval (e.g., 1 for no thinning): "))
-        while thin <= 0:
-            thin = int(input("Please enter a positive integer for the thinning interval: "))
+        dim = safe_int("Enter the dimension of the target distribution (e.g., 2): ", min_val=1)
+        num_samples = safe_int("Enter the number of samples to generate (e.g., 1000): ", min_val=1, max_val=1000000)
+        proposal_std = safe_float("Enter the standard deviation for the proposal distribution (e.g., 1.0): ", min_val=0.0001)
+        burn_in = safe_int("Enter the number of burn-in samples (e.g., 100): ", min_val=0)
+        while burn_in >= num_samples:
+            print("Burn-in must be less than number of samples.")
+            burn_in = safe_int("Enter the number of burn-in samples: ", min_val=0)
+        thin = safe_int("Enter the thinning interval (e.g., 1 for no thinning): ", min_val=1)
         
         inital = np.zeros(dim)
         samples, acceptance_rate = metropolis_hastings(log_normal, inital, num_samples, proposal_std=proposal_std, burn_in=burn_in, thin=thin)
@@ -176,16 +232,14 @@ def mcmc() -> None:
         for i in range(dim):
             print(f"Dimension {i}: Mean={mean[i]:.4f},95% CI=({lower[i]:.4f}, {upper[i]:.4f})")
 
-        trace_vis = str(input("------------------------------------------------------------------------\nWould you like to visualize the samples? (acf/trace/subplot/no): ")).lower()
-        while trace_vis not in ['acf', 'trace', 'subplot', 'no', 'n']:
-            trace_vis = str(input("Please enter 'acf', 'trace', 'subplot', or 'no'.")).lower()
+        trace_vis = safe_choice("------------------------------------------------------------------------\nWould you like to visualize the samples? (acf/trace/subplot/no): ", ['acf', 'trace', 'subplot', 'no', 'n'])
         if trace_vis in ['acf'] and dim > 0:
             acf_plot(samples, var_idx=0, show=True)
         elif trace_vis in ['trace'] and dim > 0:
             trace_plot(samples, var_idx=0, show=True)
         elif trace_vis in ['subplot'] and dim > 0:
             acf_trace_subplot(samples, var_idx=0, show=True)
-        export_choice = str(input("------------------------------------------------------------------------\nWould you like to export the MCMC results? (yes/no): ")).lower()
+        export_choice = safe_choice("------------------------------------------------------------------------\nWould you like to export the MCMC results? (yes/no): ", ['yes', 'y', 'no', 'n'])
         if export_choice in ['yes', 'y']:
             parameters = {
                 "dimension": dim,
@@ -211,18 +265,13 @@ def mcmc() -> None:
             mcmc_results_csv("Metropolis-Hastings", parameters, num_samples, posterior_summary_data)
     elif mcmc_choice == 2:    
         print("------------------------------------------------------------------------\nYou have selected Gibbs Sampling.")
-        dim = int(input("Enter the dimension of the target distribution (e.g., 2): "))
-        while dim <= 0:
-            dim = int(input("Please enter a positive integer for the dimension: "))
-        num_samples = int(input("Enter the number of samples to generate (e.g., 1000): "))
-        while num_samples <= 0 or num_samples > 1000000:
-            num_samples = int(input("Please enter a positive integer less than or equal to 1,000,000 for the number of samples: "))
-        burn_in = int(input("Enter the number of burn-in samples (e.g., 100): "))
-        while burn_in < 0 or burn_in >= num_samples:
-            burn_in = int(input("Please enter a non-negative integer less than the number of samples for burn-in: "))
-        thin = int(input("Enter the thinning interval (e.g., 1 for no thinning): "))
-        while thin <= 0:
-            thin = int(input("Please enter a positive integer for the thinning interval: "))
+        dim = safe_int("Enter the dimension of the target distribution (e.g., 2): ", min_val=1)
+        num_samples = safe_int("Enter the number of samples to generate (e.g., 1000): ", min_val=1, max_val=1000000)
+        burn_in = safe_int("Enter the number of burn-in samples (e.g., 100): ", min_val=0)
+        while burn_in >= num_samples:
+            print("Burn-in must be less than number of samples.")
+            burn_in = safe_int("Enter the number of burn-in samples: ", min_val=0)
+        thin = safe_int("Enter the thinning interval (e.g., 1 for no thinning): ", min_val=1)
 
         def gibbs_standard_normal(dim: int, n_samples: int, burn_in: int = 0, thin: int = 1) -> np.ndarray:
             total = burn_in + n_samples * thin
@@ -241,16 +290,14 @@ def mcmc() -> None:
         print(f"95% credible intervals for each dimension:")
         for i in range(dim):
             print(f"Dimension {i}: Mean={mean[i]:.4f},95% CI=({lower[i]:.4f}, {upper[i]:.4f})")
-        trace_vis = str(input("------------------------------------------------------------------------\nWould you like to visualize the samples? (acf/trace/subplot/no): ")).lower()
-        while trace_vis not in ['acf', 'trace', 'subplot', 'no', 'n']:
-            trace_vis = str(input("Please enter 'acf', 'trace', 'subplot', or 'no'.")).lower()
+        trace_vis = safe_choice("------------------------------------------------------------------------\nWould you like to visualize the samples? (acf/trace/subplot/no): ", ['acf', 'trace', 'subplot', 'no', 'n'])
         if trace_vis in ['acf'] and dim > 0:
             acf_plot(samples, var_idx=0, show=True)
         elif trace_vis in ['trace'] and dim > 0:
             trace_plot(samples, var_idx=0, show=True)
         elif trace_vis in ['subplot'] and dim > 0:
             acf_trace_subplot(samples, var_idx=0, show=True)
-        export_choice = str(input("------------------------------------------------------------------------\nWould you like to export the MCMC results? (yes/no): ")).lower()
+        export_choice = safe_choice("------------------------------------------------------------------------\nWould you like to export the MCMC results? (yes/no): ", ['yes', 'y', 'no', 'n'])
         if export_choice in ['yes', 'y']:
             parameters = {
                 "dimension": dim,
@@ -279,10 +326,7 @@ def mcmc() -> None:
 
 def pde_sde() -> None:
     print("You have selected option 7: PDE and SDE Solvers.")
-    solver_type = input("------------------------------------------------------------------------\nSelect a solver type [PDE/SDE]: ").strip().lower()
-    if solver_type not in ['pde', 'sde']:
-        print("Invalid solver type. Please enter 'PDE' or 'SDE'.")
-        return
+    solver_type = safe_choice("------------------------------------------------------------------------\nSelect a solver type [PDE/SDE]: ", ['pde', 'sde'])
 
     if solver_type == 'pde':
         pde_functions = {
@@ -294,65 +338,58 @@ def pde_sde() -> None:
         print("Choose an initial condition:")
         for key, (name, _) in pde_functions.items():
             print(f"{key}. {name}")
-        function_choice = input("Enter the number of the function: ").strip()
-        while function_choice not in pde_functions:
-            function_choice = input("Please enter a valid function number: ").strip()
+        function_choice = safe_choice("Enter the number of the function: ", list(pde_functions.keys()))
         function_name, initial_condition = pde_functions[function_choice]
-        x0 = float(input("Enter the spatial point x0: "))
-        time_horizon = float(input("Enter the time horizon T: "))
-        while time_horizon <= 0:
-            time_horizon = float(input("Please enter a positive time horizon: "))
-        sigma = float(input("Enter the diffusion coefficient sigma [1.0]: ") or "1.0")
+        x0 = safe_float("Enter the spatial point x0: ")
+        time_horizon = safe_float("Enter the time horizon T: ", min_val=0.0001)
+        sigma = safe_optional_float("Enter the diffusion coefficient sigma [1.0]: ", default=1.0)
         while sigma <= 0:
-            sigma = float(input("Please enter a positive diffusion coefficient: "))
-        n_paths = int(input("Enter the number of Monte Carlo paths [20000]: ") or "20000")
+            print("Diffusion coefficient must be positive.")
+            sigma = safe_float("Enter the diffusion coefficient sigma: ", min_val=0.0001)
+        n_paths = safe_optional_int("Enter the number of Monte Carlo paths [20000]: ", default=20000)
         while n_paths <= 0:
-            n_paths = int(input("Please enter a positive number of Monte Carlo paths: "))
-        seed_input = input("Enter random seed or leave blank for random: ").strip()
-        seed = int(seed_input) if seed_input.isdigit() else None
+            print("Number of paths must be positive.")
+            n_paths = safe_int("Enter the number of Monte Carlo paths: ", min_val=1)
+        seed = safe_seed_input("Enter random seed or leave blank for random: ")
 
         estimate, std_error = monte_carlo_pde_solution(initial_condition, x0, time_horizon, n_paths, sigma=sigma, seed=seed)
         print(f"------------------------------------------------------\nPDE Monte Carlo estimate for {function_name} at x={x0}, T={time_horizon}: {estimate:.6f} (SE: {std_error:.6f})")
-        visualization_choice = input("Would you like to visualize the PDE result? (pde/subplot/no): ").strip().lower()
-        while visualization_choice not in ['pde', 'subplot', 'no', 'n']:
-            visualization_choice = input("Please enter 'pde', 'subplot', or 'no': ").strip().lower()
+        visualization_choice = safe_choice("Would you like to visualize the PDE result? (pde/subplot/no): ", ['pde', 'subplot', 'no', 'n'])
         if visualization_choice == 'pde':
             visualize_pde_solution(initial_condition, x0, time_horizon, n_paths, sigma=sigma, seed=seed)
         elif visualization_choice == 'subplot':
             visualize_pde_sde_subplot(initial_condition, x0, time_horizon, n_paths, sigma=sigma, seed=seed)
-        export_choice = str(input("------------------------------------------------------------------------\nWould you like to export the PDE results? (yes/no): ")).lower()
+        export_choice = safe_choice("------------------------------------------------------------------------\nWould you like to export the PDE results? (yes/no): ", ['yes', 'y', 'no', 'n'])
         if export_choice in ['yes', 'y']:
             pde_sde_results_json("PDE", {"function": function_name, "x0": x0, "time_horizon": time_horizon, "n_paths": n_paths, "sigma": sigma}, n_paths, {"estimate": estimate, "std_error": std_error})
             pde_sde_results_csv("PDE", {"function": function_name, "x0": x0, "time_horizon": time_horizon, "n_paths": n_paths, "sigma": sigma}, n_paths, {"estimate": estimate, "std_error": std_error})
     
     elif solver_type == 'sde':
-        initial_value = float(input("Enter the initial value X0: "))
-        drift = float(input("Enter the drift coefficient mu [0.0]: ") or "0.0")
-        diffusion = float(input("Enter the diffusion coefficient sigma [1.0]: ") or "1.0")
+        initial_value = safe_float("Enter the initial value X0: ")
+        drift = safe_optional_float("Enter the drift coefficient mu [0.0]: ", default=0.0)
+        diffusion = safe_optional_float("Enter the diffusion coefficient sigma [1.0]: ", default=1.0)
         while diffusion <= 0:
-            diffusion = float(input("Please enter a positive diffusion coefficient: "))
-        time_horizon = float(input("Enter the time horizon T: "))
-        while time_horizon <= 0:
-            time_horizon = float(input("Please enter a positive time horizon: "))
-        n_steps = int(input("Enter the number of time steps [100]: ") or "100")
+            print("Diffusion coefficient must be positive.")
+            diffusion = safe_float("Enter the diffusion coefficient sigma: ", min_val=0.0001)
+        time_horizon = safe_float("Enter the time horizon T: ", min_val=0.0001)
+        n_steps = safe_optional_int("Enter the number of time steps [100]: ", default=100)
         while n_steps <= 0:
-            n_steps = int(input("Please enter a positive number of time steps: "))
-        n_paths = int(input("Enter the number of Monte Carlo paths [20000]: ") or "20000")
+            print("Number of steps must be positive.")
+            n_steps = safe_int("Enter the number of time steps: ", min_val=1)
+        n_paths = safe_optional_int("Enter the number of Monte Carlo paths [20000]: ", default=20000)
         while n_paths <= 0:
-            n_paths = int(input("Please enter a positive number of Monte Carlo paths: "))
-        seed_input = input("Enter random seed or leave blank for random: ").strip()
-        seed = int(seed_input) if seed_input.isdigit() else None
+            print("Number of paths must be positive.")
+            n_paths = safe_int("Enter the number of Monte Carlo paths: ", min_val=1)
+        seed = safe_seed_input("Enter random seed or leave blank for random: ")
 
         estimate, std_error = monte_carlo_sde_expectation(initial_value, drift, diffusion, time_horizon, n_steps, n_paths, seed=seed)
         print(f"------------------------------------------------------\nSDE Monte Carlo estimate at T={time_horizon}: {estimate:.6f} (SE: {std_error:.6f})")
-        visualization_choice = input("Would you like to visualize the SDE result? (sde/subplot/no): ").strip().lower()
-        while visualization_choice not in ['sde', 'subplot', 'no', 'n']:
-            visualization_choice = input("Please enter 'sde', 'subplot', or 'no': ").strip().lower()
+        visualization_choice = safe_choice("Would you like to visualize the SDE result? (sde/subplot/no): ", ['sde', 'subplot', 'no', 'n'])
         if visualization_choice == 'sde':
             visualize_sde_paths(initial_value, drift, diffusion, time_horizon, n_steps, n_paths, seed=seed)
         elif visualization_choice == 'subplot':
             visualize_pde_sde_subplot(lambda x: np.exp(-(x ** 2)), 0.0, time_horizon, n_paths, sigma=diffusion, seed=seed)
-        export_choice = str(input("------------------------------------------------------------------------\nWould you like to export the SDE results? (yes/no): ")).lower()
+        export_choice = safe_choice("------------------------------------------------------------------------\nWould you like to export the SDE results? (yes/no): ", ['yes', 'y', 'no', 'n'])
         if export_choice in ['yes', 'y']:
             pde_sde_results_json("SDE", {"initial_value": initial_value, "drift": drift, "diffusion": diffusion, "time_horizon": time_horizon, "n_steps": n_steps, "n_paths": n_paths}, n_paths, {"estimate": estimate, "std_error": std_error})
             pde_sde_results_csv("SDE", {"initial_value": initial_value, "drift": drift, "diffusion": diffusion, "time_horizon": time_horizon, "n_steps": n_steps, "n_paths": n_paths}, n_paths, {"estimate": estimate, "std_error": std_error})
@@ -363,25 +400,28 @@ def sequential_monte_carlo() -> None:
     print("------------------------------------------------------------------------\nSelect a filter model to run:")
     print("""1. Linear Gaussian Filter
 2. Nonlinear Tracking Filter""")
-    smc_choice = int(input("Enter the number of the filter model (1-2): "))
+    smc_choice = safe_int("Enter the number of the filter model (1-2): ", min_val=1, max_val=2)
     
     if smc_choice == 1:
         print("------------------------------------------------------------------------\nYou have selected Linear Gaussian Filter.")
-        n_particles = int(input("Enter the number of particles [1000]: ") or "1000")
+        n_particles = safe_optional_int("Enter the number of particles [1000]: ", default=1000)
         while n_particles <= 0:
-            n_particles = int(input("Please enter a positive number of particles: "))
-        n_steps = int(input("Enter the number of time steps [50]: ") or "50")
+            print("Number of particles must be positive.")
+            n_particles = safe_int("Enter the number of particles: ", min_val=1)
+        n_steps = safe_optional_int("Enter the number of time steps [50]: ", default=50)
         while n_steps <= 0:
-            n_steps = int(input("Please enter a positive number of time steps: "))
-        F = float(input("Enter the state transition coefficient F [1.0]: ") or "1.0")
-        Q = float(input("Enter the process noise variance Q [1.0]: ") or "1.0")
+            print("Number of steps must be positive.")
+            n_steps = safe_int("Enter the number of time steps: ", min_val=1)
+        F = safe_optional_float("Enter the state transition coefficient F [1.0]: ", default=1.0)
+        Q = safe_optional_float("Enter the process noise variance Q [1.0]: ", default=1.0)
         while Q <= 0:
-            Q = float(input("Please enter a positive process noise variance: "))
-        R = float(input("Enter the measurement noise variance R [1.0]: ") or "1.0")
+            print("Process noise variance must be positive.")
+            Q = safe_float("Enter the process noise variance Q: ", min_val=0.0001)
+        R = safe_optional_float("Enter the measurement noise variance R [1.0]: ", default=1.0)
         while R <= 0:
-            R = float(input("Please enter a positive measurement noise variance: "))
-        seed_input = input("Enter random seed or leave blank for random: ").strip()
-        seed = int(seed_input) if seed_input.isdigit() else None
+            print("Measurement noise variance must be positive.")
+            R = safe_float("Enter the measurement noise variance R: ", min_val=0.0001)
+        seed = safe_seed_input("Enter random seed or leave blank for random: ")
         
         true_state = 1.0
         observations = [true_state + np.sqrt(R) * np.random.randn() for _ in range(n_steps)]
@@ -394,9 +434,7 @@ def sequential_monte_carlo() -> None:
         print(f"Final state estimate: {final_estimate:.6f}")
         print(f"Final state variance: {final_variance:.6f}")
         
-        vis_choice = str(input("------------------------------------------------------------------------\nWould you like to visualize the filter results? (trajectories/weights/ess/subplot/no): ")).lower()
-        while vis_choice not in ['trajectories', 'weights', 'ess', 'subplot', 'no', 'n']:
-            vis_choice = str(input("Please enter 'trajectories', 'weights', 'ess', 'subplot', or 'no': ")).lower()
+        vis_choice = safe_choice("------------------------------------------------------------------------\nWould you like to visualize the filter results? (trajectories/weights/ess/subplot/no): ", ['trajectories', 'weights', 'ess', 'subplot', 'no', 'n'])
         if vis_choice == 'trajectories':
             visualize_particle_trajectories(particle_history, weight_history, observations)
         elif vis_choice == 'weights':
@@ -405,23 +443,22 @@ def sequential_monte_carlo() -> None:
             visualize_effective_sample_size(weight_history)
         elif vis_choice == 'subplot':
             visualize_sequential_subplot(particle_history, weight_history, observations)
-        export_option = str(input("------------------------------------------------------------------------\nWould you like to export the filter results? (yes/no): ")).lower()
-        while export_option not in ['yes', 'y', 'no', 'n']:
-            export_option = str(input("Please enter 'yes' or 'no': ")).lower()
+        export_option = safe_choice("------------------------------------------------------------------------\nWould you like to export the filter results? (yes/no): ", ['yes', 'y', 'no', 'n'])
         if export_option in ['yes', 'y']:
             sequential_results_json("Nonlinear Tracking Filter", {"n_particles": n_particles, "n_steps": n_steps}, len(particle_history), {"final_estimate": final_estimate, "final_variance": final_variance})
             sequential_results_csv("Nonlinear Tracking Filter", {"n_particles": n_particles, "n_steps": n_steps}, len(particle_history), {"final_estimate": final_estimate, "final_variance": final_variance})
     
     elif smc_choice == 2:
         print("------------------------------------------------------------------------\nYou have selected Nonlinear Tracking Filter.")
-        n_particles = int(input("Enter the number of particles [1000]: ") or "1000")
+        n_particles = safe_optional_int("Enter the number of particles [1000]: ", default=1000)
         while n_particles <= 0:
-            n_particles = int(input("Please enter a positive number of particles: "))
-        n_steps = int(input("Enter the number of time steps [50]: ") or "50")
+            print("Number of particles must be positive.")
+            n_particles = safe_int("Enter the number of particles: ", min_val=1)
+        n_steps = safe_optional_int("Enter the number of time steps [50]: ", default=50)
         while n_steps <= 0:
-            n_steps = int(input("Please enter a positive number of time steps: "))
-        seed_input = input("Enter random seed or leave blank for random: ").strip()
-        seed = int(seed_input) if seed_input.isdigit() else None
+            print("Number of steps must be positive.")
+            n_steps = safe_int("Enter the number of time steps: ", min_val=1)
+        seed = safe_seed_input("Enter random seed or leave blank for random: ")
         
         true_states = np.zeros(n_steps)
         observations = np.zeros(n_steps)
@@ -439,9 +476,7 @@ def sequential_monte_carlo() -> None:
         print(f"Final state estimate: {final_estimate:.6f}")
         print(f"Final state variance: {final_variance:.6f}")
         
-        vis_choice = str(input("------------------------------------------------------------------------\nWould you like to visualize the filter results? (trajectories/weights/ess/subplot/no): ")).lower()
-        while vis_choice not in ['trajectories', 'weights', 'ess', 'subplot', 'no', 'n']:
-            vis_choice = str(input("Please enter 'trajectories', 'weights', 'ess', 'subplot', or 'no': ")).lower()
+        vis_choice = safe_choice("------------------------------------------------------------------------\nWould you like to visualize the filter results? (trajectories/weights/ess/subplot/no): ", ['trajectories', 'weights', 'ess', 'subplot', 'no', 'n'])
         if vis_choice == 'trajectories':
             visualize_particle_trajectories(particle_history, weight_history, observations)
         elif vis_choice == 'weights':
@@ -450,9 +485,7 @@ def sequential_monte_carlo() -> None:
             visualize_effective_sample_size(weight_history)
         elif vis_choice == 'subplot':
             visualize_sequential_subplot(particle_history, weight_history, observations)
-        export_option = str(input("------------------------------------------------------------------------\nWould you like to export the filter results? (yes/no): ")).lower()
-        while export_option not in ['yes', 'y', 'no', 'n']:
-            export_option = str(input("Please enter 'yes' or 'no': ")).lower()
+        export_option = safe_choice("------------------------------------------------------------------------\nWould you like to export the filter results? (yes/no): ", ['yes', 'y', 'no', 'n'])
         if export_option in ['yes', 'y']:
             sequential_results_json("Nonlinear Tracking Filter", {"n_particles": n_particles, "n_steps": n_steps}, len(particle_history), {"final_estimate": final_estimate, "final_variance": final_variance})
             sequential_results_csv("Nonlinear Tracking Filter", {"n_particles": n_particles, "n_steps": n_steps}, len(particle_history), {"final_estimate": final_estimate, "final_variance": final_variance})
