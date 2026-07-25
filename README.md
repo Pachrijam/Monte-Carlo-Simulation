@@ -12,10 +12,6 @@ Monte-Carlo-Simulation/
 │
 ├── main.py
 │
-├── export/
-│   ├── export_json.py
-│   └── export_csv.py
-│
 ├── calculate_simulations/                     # all simulation logic
 │   ├── calculate_european_options.py
 │   ├── calculate_int.py
@@ -37,7 +33,9 @@ Monte-Carlo-Simulation/
 │   └── visualizationVariance.py
 │
 ├── utils/
-│   └── exceptions.py                # handles invalid user input
+│   ├── exceptions.py                # handles invalid user input and export results
+│   ├── export_csv.py
+│   └── export_json.py 
 │
 ├── README.md
 └── LICENSE.md
