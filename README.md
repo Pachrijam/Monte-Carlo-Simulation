@@ -12,31 +12,35 @@ Monte-Carlo-Simulation/
 │
 ├── main.py
 │
-├── export_json.py                     # exports simulation results
-├── export_csv.py                    
+├── export/
+│   ├── export_json.py
+│   └── export_csv.py
 │
-├── calculate_european_options.py      # calculates results of each simulation
-├── calculate_int.py
-├── calculate_mcmc_bayes.py
-├── calculate_pde_sde.py
-├── calculate_pi.py
-├── calculate_rare_event.py
-├── calculate_confidence.py
-├── calculate_sequential.py
-├── calculate_variance.py
+├── calculate_simulations/                     # all simulation logic
+│   ├── calculate_european_options.py
+│   ├── calculate_int.py
+│   ├── calculate_mcmc_bayes.py
+│   ├── calculate_pde_sde.py
+│   ├── calculate_pi.py
+│   ├── calculate_rare_event.py
+│   ├── calculate_confidence.py
+│   ├── calculate_sequential.py
+│   └── calculate_variance.py
 │
-├── visualizationInt.py                # visualizes results of each simulation using matplotlib
-├── visualizationMCMC.py
-├── visualizationPDE_SDE.py
-├── visualizationPi.py
-├── visualizationRareEvent.py
-├── visualizationSequential.py
-├── visualizationVariance.py
+├── visualizations/                   # all plotting / matplotlib logic
+│   ├── visualizationInt.py
+│   ├── visualizationMCMC.py
+│   ├── visualizationPDE_SDE.py
+│   ├── visualizationPi.py
+│   ├── visualizationRareEvent.py
+│   ├── visualizationSequential.py
+│   └── visualizationVariance.py
 │
-├── exceptions.py                      # catches invalid user input
+├── utils/
+│   └── exceptions.py                # handles invalid user input
 │
 ├── README.md
-├── LICENSE.md
+└── LICENSE.md
 ```
 ## Video Resources
   ### Monte Carlo Pi Estimation
