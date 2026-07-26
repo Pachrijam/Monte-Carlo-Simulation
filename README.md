@@ -12,6 +12,8 @@ Monte-Carlo-Simulation/
 │
 ├── main.py
 │
+├── main.py
+│
 ├── calculate_simulations/                     # all simulation logic
 │   ├── calculate_european_options.py
 │   ├── calculate_int.py
