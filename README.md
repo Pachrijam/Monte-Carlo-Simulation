@@ -12,7 +12,7 @@ Monte-Carlo-Simulation/
 │
 ├── main.py
 │
-├── main.py
+├── menu.py
 │
 ├── calculate_simulations/                     # all simulation logic
 │   ├── calculate_european_options.py
