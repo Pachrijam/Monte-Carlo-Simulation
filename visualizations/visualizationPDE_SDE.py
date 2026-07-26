@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from calculate_pde_sde import monte_carlo_pde_solution, simulate_sde_paths
+from calculate_simulations.calculate_pde_sde import monte_carlo_pde_solution, simulate_sde_paths
 
 
 def visualize_pde_solution(initial_condition, x0, time_horizon, n_paths, sigma=1.0, x_values=None, seed=None, show=True):
