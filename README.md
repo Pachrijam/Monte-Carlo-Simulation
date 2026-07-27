@@ -56,6 +56,8 @@ Monte-Carlo-Simulation/
   - "Jafar Ghazanfarian": https://youtu.be/8w7v_pM6GWM?si=lYTgmc0Xu5afSyeg
   ### European Options
   - "QuantPy": https://youtu.be/fk38oX9GsxE?si=6T5Jlrj-Xe1kpNF5
+  ### CSV & json
+  -
   ### Miscellaneous
   - "The Synthetic Mind": https://youtu.be/WjmNedsX1T0?si=uSVoNJQRyHhcCifr
   - "Decision Lab": https://youtu.be/psOYFdx838E?si=dRDkmuvgSk-EPnJg
