@@ -57,7 +57,8 @@ Monte-Carlo-Simulation/
   ### European Options
   - "QuantPy": https://youtu.be/fk38oX9GsxE?si=6T5Jlrj-Xe1kpNF5
   ### CSV & json
-  -
+  - "Tech with Tim": https://youtu.be/-51jxlQaxyA?si=PPVqpGcIc1I4L6eR
+  - "Corey Schafer": https://youtu.be/q5uM4VKywbA?si=Gr5vnjPuDrPmBJNm
   ### Miscellaneous
   - "The Synthetic Mind": https://youtu.be/WjmNedsX1T0?si=uSVoNJQRyHhcCifr
   - "Decision Lab": https://youtu.be/psOYFdx838E?si=dRDkmuvgSk-EPnJg
