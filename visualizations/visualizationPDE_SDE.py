@@ -1,9 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from calculators.calculate_pde_sde import monte_carlo_pde_solution, simulate_sde_paths
 
 
 def visualize_pde_solution(initial_condition, x0, time_horizon, n_paths, sigma=1.0, x_values=None, seed=None, show=True):
+    from calculators.calculate_pde_sde import monte_carlo_pde_solution
     plt.style.use("dark_background")
     if x_values is None:
         x_values = np.linspace(-2.0, 2.0, 9)
@@ -30,6 +30,7 @@ def visualize_pde_solution(initial_condition, x0, time_horizon, n_paths, sigma=1
 
 
 def visualize_sde_paths(initial_value, drift, diffusion, time_horizon, n_steps, n_paths, seed=None, show=True):
+    from calculators.calculate_pde_sde import simulate_sde_paths
     plt.style.use("dark_background")
     paths, time_grid = simulate_sde_paths(initial_value, drift, diffusion, time_horizon, n_steps, n_paths, seed=seed)
 
@@ -49,6 +50,7 @@ def visualize_sde_paths(initial_value, drift, diffusion, time_horizon, n_steps, 
 
 
 def visualize_pde_sde_subplot(initial_condition, x0, time_horizon, n_paths, sigma=1.0, initial_value=0.0, drift=0.0, diffusion=1.0, n_steps=50, seed=None, show=True):
+    from calculators.calculate_pde_sde import monte_carlo_pde_solution, simulate_sde_paths
     plt.style.use("dark_background")
     fig, axes = plt.subplots(1, 2, figsize=(12, 4))
 

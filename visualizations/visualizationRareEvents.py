@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from calculators.calculate_rare_events import estimate_rare_event_probability
 
 def visualize_rare_event_probability(initial_condition, x0, time_horizon, n_paths, threshold, sigma=1.0, seed=None, show=True):
     plt.style.use("dark_background")

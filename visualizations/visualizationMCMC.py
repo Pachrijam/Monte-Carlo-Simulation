@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from typing import Optional
-from calculators.calculate_mcmc_bayes import autocorrelation
+
 
 
 def trace_plot(samples: np.ndarray, var_idx: int = 0, ax=None, show: bool = True, savepath: Optional[str] = None):
