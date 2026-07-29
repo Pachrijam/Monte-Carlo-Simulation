@@ -9,11 +9,6 @@ from calculators.calculate_rare_events import run_rare
 from calculators.calculate_european_options import run_european
 
 
-def variance_reduction() -> None:
-    print("You have selected option 5: Variance Reduction Techniques.")
-    print("This feature is under development.")
-
-
 def main() -> None:
     while True:
         sim_choice: int = get_menu_choice()
@@ -26,7 +21,7 @@ def main() -> None:
             run_pi()
         elif sim_choice == 3:
             #run_variance()
-            print("Variance reduction is under development")
+            pass
         elif sim_choice == 4:
             run_mcmc()
         elif sim_choice == 5:

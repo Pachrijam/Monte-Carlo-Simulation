@@ -1,6 +1,6 @@
 from __future__ import annotations
 import math
-import random
+import numpy as np
 from typing import Tuple
 from utils.export_csv import european_option_results_csv
 from utils.export_json import european_option_results_json
@@ -93,62 +93,53 @@ def monte_carlo_european(
     control_variate: bool = False,
     seed: int | None = None,
 ) -> Tuple[float, float]:
-    if seed is not None:
-        random.seed(seed)
-
+    
+    rng = np.random.default_rng(seed)
+    
     drift = (r - 0.5 * sigma * sigma) * T
     vol = sigma * math.sqrt(max(T, 0.0))
-
-    payoffs = []
-    controls = []
+    discount = math.exp(-r * T)
 
     if antithetic:
         half = (n_sim + 1) // 2
-        for _ in range(half):
-            z = random.gauss(0.0, 1.0)
-            st1 = S0 * math.exp(drift + vol * z)
-            st2 = S0 * math.exp(drift - vol * z)
-            if option == "call":
-                p1 = max(st1 - K, 0.0)
-                p2 = max(st2 - K, 0.0)
-            else:
-                p1 = max(K - st1, 0.0)
-                p2 = max(K - st2, 0.0)
-            payoffs.append((p1 + p2) / 2.0)
-            if control_variate:
-                controls.append((st1 + st2) / 2.0)
+        z = rng.standard_normal(half)
+        st1 = S0 * np.exp(drift + vol * z)
+        st2 = S0 * np.exp(drift - vol * z)
+        if option == "call":
+            p1 = np.maximum(st1 - K, 0.0)
+            p2 = np.maximum(st2 - K, 0.0)
+        else:
+            p1 = np.maximum(K - st1, 0.0)
+            p2 = np.maximum(K - st2, 0.0)
+        payoffs = (p1 + p2) * 0.5
+        controls = (st1 + st2) * 0.5 if control_variate else None
     else:
-        for _ in range(n_sim):
-            z = random.gauss(0.0, 1.0)
-            st = S0 * math.exp(drift + vol * z)
-            if option == "call":
-                p = max(st - K, 0.0)
-            else:
-                p = max(K - st, 0.0)
-            payoffs.append(p)
-            if control_variate:
-                controls.append(st)
+        z = rng.standard_normal(n_sim)
+        st = S0 * np.exp(drift + vol * z)
+        if option == "call":
+            payoffs = np.maximum(st - K, 0.0)
+        else:
+            payoffs = np.maximum(K - st, 0.0)
+        controls = st if control_variate else None
+ 
+    m = payoffs.size
+    denom = (m - 1) if m > 1 else 1
 
-    m = float(len(payoffs))
-    avg_payoff = sum(payoffs) / m
-    discount = math.exp(-r * T)
-
-    if control_variate and len(controls) == m:
+    if control_variate and controls is not None:
         EX = S0 * math.exp(r * T)
-        X = controls
-        Y = payoffs
-        meanX = sum(X) / m
-        meanY = sum(Y) / m
-        cov = sum((xi - meanX) * (yi - meanY) for xi, yi in zip(X, Y)) / (m - 1 if m > 1 else 1)
-        varX = sum((xi - meanX) ** 2 for xi in X) / (m - 1 if m > 1 else 1)
+        meanX = controls.mean()
+        meanY = payoffs.mean()
+        cov = np.sum((controls-meanX) * (payoffs - meanY)) / denom
+        varX = np.sum((controls-meanX) **2) / denom
         b = cov / varX if varX > 0 else 0.0
-        adjusted = [yi - b * (xi - EX) for xi, yi in zip(X, Y)]
-        avg_payoff = sum(adjusted) / m
-        var_adj = sum((z - avg_payoff) ** 2 for z in adjusted) / (m - 1 if m > 1 else 1)
+        adjusted = payoffs - b * (controls - EX)
+        avg_payoff = adjusted.mean()
+        var_adj = np.sum((adjusted - avg_payoff) ** 2) / denom
         stderr = math.sqrt(var_adj / m) * discount
     else:
-        var_pay = sum((z - avg_payoff) ** 2 for z in payoffs) / (m - 1 if m > 1 else 1)
+        avg_payoff = payoffs.mean()
+        var_pay = np.sum((payoffs - avg_payoff) ** 2) / denom
         stderr = math.sqrt(var_pay / m) * discount
 
     price = discount * avg_payoff
-    return price, stderr
+    return float(price), float(stderr)
