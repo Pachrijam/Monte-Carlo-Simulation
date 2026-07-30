@@ -27,8 +27,8 @@ def run_mcmc() -> None:
             burn_in = safe_int("Enter the number of burn-in samples: ", min_val=0)
         thin = safe_int("Enter the thinning interval (e.g., 1 for no thinning): ", min_val=1)
         
-        inital = np.zeros(dim)
-        samples, acceptance_rate = metropolis_hastings(log_normal, inital, num_samples, proposal_std=proposal_std, burn_in=burn_in, thin=thin)
+        initial = np.zeros(dim)
+        samples, acceptance_rate = metropolis_hastings(log_normal, initial, num_samples, proposal_std=proposal_std, burn_in=burn_in, thin=thin)
         
         print(f"------------------------------------------------------------------------\nMetropolis-Hastings completed. Acceptance rate: {acceptance_rate:.4f}")
         mean, lower, upper = posterior_summary(samples, cred=0.95)
@@ -63,7 +63,7 @@ def run_mcmc() -> None:
                     "ci_lower": lower[i],
                     "ci_upper": upper[i],
                     "95% CI Lower": lower[i],
-                    "95% CI Upper": lower[i]
+                    "95% CI Upper": upper[i]
                 })
             mcmc_results_json("Metropolis-Hastings", parameters, num_samples, posterior_summary_data)
             mcmc_results_csv("Metropolis-Hastings", parameters, num_samples, posterior_summary_data)
@@ -88,7 +88,7 @@ def run_mcmc() -> None:
                     samples.append(x.copy())
             return np.array(samples)
 
-        samples = gibbs_standard_normal(dim, num_samples - burn_in if burn_in < num_samples else num_samples, burn_in=burn_in, thin=thin)
+        samples = gibbs_standard_normal(dim, num_samples, burn_in=burn_in, thin=thin)
         print(f"------------------------------------------------------------------------\nGibbs sampling completed. Generated {samples.shape[0]} samples.")
         mean, lower, upper = posterior_summary(samples, cred=0.95)
         print(f"95% credible intervals for each dimension:")
@@ -120,7 +120,7 @@ def run_mcmc() -> None:
                     "ci_lower": lower[i],
                     "ci_upper": upper[i],
                     "95% CI Lower": lower[i],
-                    "95% CI Upper": lower[i]
+                    "95% CI Upper": upper[i]
                 })
             mcmc_results_json("Gibbs Sampling", parameters, num_samples, posterior_summary_data)
             mcmc_results_csv("Gibbs Sampling", parameters, num_samples, posterior_summary_data)

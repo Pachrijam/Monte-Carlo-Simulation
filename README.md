@@ -34,6 +34,10 @@ Monte-Carlo-Simulation/
 │   ├── visualizationSequential.py
 │   └── visualizationVariance.py
 │
+├── animations/                       # cli animations
+│   ├──
+│   └──
+│
 ├── utils/
 │   ├── exceptions.py                # handles invalid user input and export results
 │   ├── export_csv.py

@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 from typing import Optional
 
 
-
 def trace_plot(samples: np.ndarray, var_idx: int = 0, ax=None, show: bool = True, savepath: Optional[str] = None):
     plt.style.use('dark_background')
     s = np.asarray(samples)
@@ -25,6 +24,7 @@ def trace_plot(samples: np.ndarray, var_idx: int = 0, ax=None, show: bool = True
 def acf_plot(samples: np.ndarray, var_idx: int = 0, max_lag: int = 50, ax=None, show: bool = True, savepath: Optional[str] = None):
     plt.style.use('dark_background')
     s = np.asarray(samples)
+    from calculators.calculate_mcmc_bayes import autocorrelation
     acf = autocorrelation(s[:, var_idx], max_lag)
     lags = np.arange(acf.size)
     if ax is None:
@@ -48,6 +48,7 @@ def acf_trace_subplot(samples: np.ndarray, var_idx: int = 0, max_lag: int = 50, 
     plt.style.use('dark_background')
     s = np.asarray(samples)
     y = s[:, var_idx]
+    from calculators.calculate_mcmc_bayes import autocorrelation
     acf = autocorrelation(y, max_lag)
     lags = np.arange(acf.size)
     if ax is None:
