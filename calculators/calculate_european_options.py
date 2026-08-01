@@ -4,6 +4,7 @@ import numpy as np
 from typing import Tuple
 from utils.export_csv import european_option_results_csv
 from utils.export_json import european_option_results_json
+from calculators.calculate_confidence import confidence_interval
 
 
 def run_european() -> None:
@@ -43,15 +44,17 @@ def run_european() -> None:
     seed_input = input("Enter random seed (integer) or leave blank for random: ").strip()
     seed = int(seed_input) if seed_input.isdigit() else None
 
-    mc_price, mc_se = monte_carlo_european(S0, K, T, r, sigma, option=option, n_sim=n_sim, antithetic=antithetic, control_variate=control_variate, seed=seed)
+    mc_price, mc_se, confidence_intervals = monte_carlo_european(S0, K, T, r, sigma, option=option, n_sim=n_sim, antithetic=antithetic, control_variate=control_variate, seed=seed)
     bs_price = black_scholes_price(S0, K, T, r, sigma, option)
 
     print(f"------------------------------------------------------\nMonte Carlo estimated price: {mc_price} (SE: {mc_se})")
+    for ci in confidence_intervals:
+        print(f"{int(ci['confidence_level']*100)}% CI: mean={ci['mean']}, lower={ci['lower']}, upper={ci['upper']}, ME={ci['margin_of_error']}")
     print(f"Black-Scholes closed-form price: {bs_price}")
     export_choice = str(input("------------------------------------------------------------------------\nWould you like to export the European option results? (yes/no): ")).lower()
     if export_choice in ['yes', 'y']:
-        european_option_results_json(S0, K, T, r, sigma, n_sim, mc_price)
-        european_option_results_csv(S0, K, T, r, sigma, n_sim, mc_price)
+        european_option_results_json(S0, K, T, r, sigma, n_sim, mc_price, confidence_intervals)
+        european_option_results_csv(S0, K, T, r, sigma, n_sim, mc_price, confidence_intervals)
 
 
 def _norm_cdf(x: float) -> float:
@@ -92,7 +95,7 @@ def monte_carlo_european(
     antithetic: bool = False,
     control_variate: bool = False,
     seed: int | None = None,
-) -> Tuple[float, float]:
+) -> Tuple[float, float, list]:
     
     rng = np.random.default_rng(seed)
     
@@ -100,6 +103,7 @@ def monte_carlo_european(
     vol = sigma * math.sqrt(max(T, 0.0))
     discount = math.exp(-r * T)
 
+    adjusted = None
     if antithetic:
         half = (n_sim + 1) // 2
         z = rng.standard_normal(half)
@@ -142,4 +146,9 @@ def monte_carlo_european(
         stderr = math.sqrt(var_pay / m) * discount
 
     price = discount * avg_payoff
-    return float(price), float(stderr)
+    if control_variate and 'adjusted' in locals() and adjusted is not None:
+        samples = discount * adjusted
+    else:
+        samples = discount * payoffs
+    confidence_intervals = [confidence_interval(samples, confidence=conf) for conf in (0.90, 0.95, 0.99)]
+    return float(price), float(stderr), confidence_intervals

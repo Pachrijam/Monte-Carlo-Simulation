@@ -45,7 +45,7 @@ def mcmc_results_json(method_name, parameters, num_samples, posterior_summary_da
         json.dump(json_data, f, indent=2)
     print(f"Results exported to {json_file}")
 
-def integration_results_json(function_name, lower_bound, upper_bound, num_samples, integral_estimate, filename=None):
+def integration_results_json(function_name, lower_bound, upper_bound, num_samples, integral_estimate, confidence_data=None, filename=None):
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"integration_results_{timestamp}"
@@ -60,7 +60,8 @@ def integration_results_json(function_name, lower_bound, upper_bound, num_sample
         "lower_bound": lower_bound,
         "upper_bound": upper_bound,
         "num_samples": num_samples,
-        "integral_estimate": float(integral_estimate)
+        "integral_estimate": float(integral_estimate),
+        "confidence_intervals": confidence_data if confidence_data is not None else []
     }
     
     json_file = results_dir / f"{filename}.json"
@@ -68,7 +69,7 @@ def integration_results_json(function_name, lower_bound, upper_bound, num_sample
         json.dump(json_data, f, indent=2)
     print(f"Results exported to {json_file}")
 
-def european_option_results_json(S, K, T, r, sigma, num_simulations, option_price_estimate, filename=None):
+def european_option_results_json(S, K, T, r, sigma, num_simulations, option_price_estimate, confidence_data=None, filename=None):
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"european_option_results_{timestamp}"
@@ -87,7 +88,8 @@ def european_option_results_json(S, K, T, r, sigma, num_simulations, option_pric
             "sigma": sigma,
             "num_simulations": num_simulations
         },
-        "option_price_estimate": float(option_price_estimate)
+        "option_price_estimate": float(option_price_estimate),
+        "confidence_intervals": confidence_data if confidence_data is not None else []
     }
     
     json_file = results_dir / f"{filename}.json"
@@ -95,7 +97,7 @@ def european_option_results_json(S, K, T, r, sigma, num_simulations, option_pric
         json.dump(json_data, f, indent=2)
     print(f"Results exported to {json_file}")
     
-def pde_sde_results_json(solver_type, parameters, num_samples, results_summary, filename=None):
+def pde_sde_results_json(solver_type, parameters, num_samples, results_summary, confidence_data=None, filename=None):
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"{solver_type}_results_{timestamp}"
@@ -108,7 +110,8 @@ def pde_sde_results_json(solver_type, parameters, num_samples, results_summary, 
         "solver_type": solver_type,
         "parameters": parameters,
         "num_samples": num_samples,
-        "results_summary": results_summary
+        "results_summary": results_summary,
+        "confidence_intervals": confidence_data if confidence_data is not None else []
     }
     
     json_file = results_dir / f"{filename}.json"
@@ -116,7 +119,7 @@ def pde_sde_results_json(solver_type, parameters, num_samples, results_summary, 
         json.dump(json_data, f, indent=2)
     print(f"Results exported to {json_file}")
     
-def rare_event_results_json(initial_condition, x0, time_horizon, n_paths, threshold, rare_event_probability_estimate, filename=None):
+def rare_event_results_json(initial_condition, x0, time_horizon, n_paths, threshold, rare_event_probability_estimate, confidence_data=None, filename=None):
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"rare_event_results_{timestamp}"
@@ -132,7 +135,8 @@ def rare_event_results_json(initial_condition, x0, time_horizon, n_paths, thresh
         "time_horizon": time_horizon,
         "n_paths": n_paths,
         "threshold": threshold,
-        "rare_event_probability_estimate": float(rare_event_probability_estimate)
+        "rare_event_probability_estimate": float(rare_event_probability_estimate),
+        "confidence_intervals": confidence_data if confidence_data is not None else []
     }
     
     json_file = results_dir / f"{filename}.json"
@@ -140,7 +144,7 @@ def rare_event_results_json(initial_condition, x0, time_horizon, n_paths, thresh
         json.dump(json_data, f, indent=2)
     print(f"Results exported to {json_file}")
     
-def sequential_results_json(method_name, parameters, num_samples, results_summary, filename=None):
+def sequential_results_json(method_name, parameters, num_samples, results_summary, confidence_data=None, filename=None):
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"sequential_results_{timestamp}"
@@ -153,7 +157,8 @@ def sequential_results_json(method_name, parameters, num_samples, results_summar
         "method": method_name,
         "parameters": parameters,
         "num_samples": num_samples,
-        "results_summary": results_summary
+        "results_summary": results_summary,
+        "confidence_intervals": confidence_data if confidence_data is not None else []
     }
 
     json_file = results_dir / f"{filename}.json"

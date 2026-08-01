@@ -67,7 +67,7 @@ def mcmc_results_csv(method_name, parameters, num_samples, posterior_summary_dat
             ])
     print(f"Results exported to {csv_file}")    
     
-def integration_results_csv(function_name, lower_bound, upper_bound, num_samples, integral_estimate, filename=None):
+def integration_results_csv(function_name, lower_bound, upper_bound, num_samples, integral_estimate, confidence_data=None, filename=None):
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"integration_results_{timestamp}"
@@ -86,9 +86,20 @@ def integration_results_csv(function_name, lower_bound, upper_bound, num_samples
         writer.writerow(["Upper Bound", upper_bound])
         writer.writerow(["Number of Samples", num_samples])
         writer.writerow(["Integral Estimate", integral_estimate])
+        if confidence_data:
+            writer.writerow([])
+            writer.writerow(["Confidence Level", "Mean", "Lower Bound", "Upper Bound", "Margin of Error"])
+            for conf in confidence_data:
+                writer.writerow([
+                    f"{int(conf['confidence_level']*100)}%",
+                    conf['mean'],
+                    conf['lower'],
+                    conf['upper'],
+                    conf['margin_of_error']
+                ])
     print(f"Results exported to {csv_file}") 
  
-def european_option_results_csv(S, K, T, r, sigma, num_simulations, option_price_estimate, filename=None):
+def european_option_results_csv(S, K, T, r, sigma, num_simulations, option_price_estimate, confidence_data=None, filename=None):
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"european_option_results_{timestamp}"
@@ -109,9 +120,20 @@ def european_option_results_csv(S, K, T, r, sigma, num_simulations, option_price
         writer.writerow(["Volatility (sigma)", sigma])
         writer.writerow(["Number of Simulations", num_simulations])
         writer.writerow(["Option Price Estimate", option_price_estimate])
+        if confidence_data:
+            writer.writerow([])
+            writer.writerow(["Confidence Level", "Mean", "Lower Bound", "Upper Bound", "Margin of Error"])
+            for conf in confidence_data:
+                writer.writerow([
+                    f"{int(conf['confidence_level']*100)}%",
+                    conf['mean'],
+                    conf['lower'],
+                    conf['upper'],
+                    conf['margin_of_error']
+                ])
     print(f"Results exported to {csv_file}")    
     
-def pde_sde_results_csv(solver_type, parameters, num_samples, results_summary, filename=None):
+def pde_sde_results_csv(solver_type, parameters, num_samples, results_summary, confidence_data=None, filename=None):
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"{solver_type}_results_{timestamp}"
@@ -132,9 +154,20 @@ def pde_sde_results_csv(solver_type, parameters, num_samples, results_summary, f
         writer.writerow(["Result Metric", "Value"])
         for metric, value in results_summary.items():
             writer.writerow([metric, value])
+        if confidence_data:
+            writer.writerow([])
+            writer.writerow(["Confidence Level", "Mean", "Lower Bound", "Upper Bound", "Margin of Error"])
+            for conf in confidence_data:
+                writer.writerow([
+                    f"{int(conf['confidence_level']*100)}%",
+                    conf['mean'],
+                    conf['lower'],
+                    conf['upper'],
+                    conf['margin_of_error']
+                ])
     print(f"Results exported to {csv_file}")
     
-def rare_event_results_csv(initial_condition, x0, time_horizon, n_paths, threshold, rare_event_probability_estimate, filename=None):
+def rare_event_results_csv(initial_condition, x0, time_horizon, n_paths, threshold, rare_event_probability_estimate, confidence_data=None, filename=None):
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"rare_event_results_{timestamp}"
@@ -154,9 +187,20 @@ def rare_event_results_csv(initial_condition, x0, time_horizon, n_paths, thresho
         writer.writerow(["Number of Paths", n_paths])
         writer.writerow(["Threshold", threshold])
         writer.writerow(["Rare Event Probability Estimate", rare_event_probability_estimate])
+        if confidence_data:
+            writer.writerow([])
+            writer.writerow(["Confidence Level", "Mean", "Lower Bound", "Upper Bound", "Margin of Error"])
+            for conf in confidence_data:
+                writer.writerow([
+                    f"{int(conf['confidence_level']*100)}%",
+                    conf['mean'],
+                    conf['lower'],
+                    conf['upper'],
+                    conf['margin_of_error']
+                ])
     print(f"Results exported to {csv_file}")
     
-def sequential_results_csv(method_name, parameters, num_samples, results_summary, filename=None):
+def sequential_results_csv(method_name, parameters, num_samples, results_summary, confidence_data=None, filename=None):
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"sequential_results_{timestamp}"
@@ -177,6 +221,17 @@ def sequential_results_csv(method_name, parameters, num_samples, results_summary
         writer.writerow(["Result Metric", "Value"])
         for metric, value in results_summary.items():
             writer.writerow([metric, value])
+        if confidence_data:
+            writer.writerow([])
+            writer.writerow(["Confidence Level", "Mean", "Lower Bound", "Upper Bound", "Margin of Error"])
+            for conf in confidence_data:
+                writer.writerow([
+                    f"{int(conf['confidence_level']*100)}%",
+                    conf['mean'],
+                    conf['lower'],
+                    conf['upper'],
+                    conf['margin_of_error']
+                ])
     print(f"Results exported to {csv_file}")
     
 def variance_results_csv(method_name, parameters, num_samples, variance_estimate, filename=None):

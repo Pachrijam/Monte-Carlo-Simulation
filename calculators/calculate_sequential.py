@@ -3,6 +3,7 @@ from utils.exceptions import safe_int, safe_optional_float, safe_optional_int, s
 from visualizations.visualizationSequential import visualize_particle_trajectories, visualize_particle_weights, visualize_effective_sample_size, visualize_sequential_subplot
 from utils.export_csv import sequential_results_csv
 from utils.export_json import sequential_results_json
+from calculators.calculate_confidence import confidence_interval
 
 
 def run_sequential() -> None:
@@ -43,6 +44,16 @@ def run_sequential() -> None:
         final_variance = state_variance(particle_history[-1], weight_history[-1], final_estimate)
         print(f"Final state estimate: {final_estimate:.6f}")
         print(f"Final state variance: {final_variance:.6f}")
+        try:
+            particles = particle_history[-1]
+            weights = weight_history[-1]
+            rng = np.random.default_rng()
+            resampled = rng.choice(particles, size=len(particles), replace=True, p=weights)
+            confidence_intervals = [confidence_interval(resampled, confidence=conf) for conf in (0.90, 0.95, 0.99)]
+            for ci in confidence_intervals:
+                print(f"{int(ci['confidence_level']*100)}% CI: mean={ci['mean']:.6f}, lower={ci['lower']:.6f}, upper={ci['upper']:.6f}, ME={ci['margin_of_error']:.6f}")
+        except Exception:
+            confidence_intervals = []
         
         vis_choice = safe_choice("------------------------------------------------------------------------\nWould you like to visualize the filter results? (trajectories/weights/ess/subplot/no): ", ['trajectories', 'weights', 'ess', 'subplot', 'no', 'n'])
         if vis_choice == 'trajectories':
@@ -55,8 +66,8 @@ def run_sequential() -> None:
             visualize_sequential_subplot(particle_history, weight_history, observations)
         export_option = safe_choice("------------------------------------------------------------------------\nWould you like to export the filter results? (yes/no): ", ['yes', 'y', 'no', 'n'])
         if export_option in ['yes', 'y']:
-            sequential_results_json("Nonlinear Tracking Filter", {"n_particles": n_particles, "n_steps": n_steps}, len(particle_history), {"final_estimate": final_estimate, "final_variance": final_variance})
-            sequential_results_csv("Nonlinear Tracking Filter", {"n_particles": n_particles, "n_steps": n_steps}, len(particle_history), {"final_estimate": final_estimate, "final_variance": final_variance})
+            sequential_results_json("Nonlinear Tracking Filter", {"n_particles": n_particles, "n_steps": n_steps}, len(particle_history), {"final_estimate": final_estimate, "final_variance": final_variance}, confidence_intervals)
+            sequential_results_csv("Nonlinear Tracking Filter", {"n_particles": n_particles, "n_steps": n_steps}, len(particle_history), {"final_estimate": final_estimate, "final_variance": final_variance}, confidence_intervals)
     
     elif smc_choice == 2:
         print("------------------------------------------------------------------------\nYou have selected Nonlinear Tracking Filter.")
@@ -85,6 +96,16 @@ def run_sequential() -> None:
         final_variance = state_variance(particle_history[-1], weight_history[-1], final_estimate)
         print(f"Final state estimate: {final_estimate:.6f}")
         print(f"Final state variance: {final_variance:.6f}")
+        try:
+            particles = particle_history[-1]
+            weights = weight_history[-1]
+            rng = np.random.default_rng()
+            resampled = rng.choice(particles, size=len(particles), replace=True, p=weights)
+            confidence_intervals = [confidence_interval(resampled, confidence=conf) for conf in (0.90, 0.95, 0.99)]
+            for ci in confidence_intervals:
+                print(f"{int(ci['confidence_level']*100)}% CI: mean={ci['mean']:.6f}, lower={ci['lower']:.6f}, upper={ci['upper']:.6f}, ME={ci['margin_of_error']:.6f}")
+        except Exception:
+            confidence_intervals = []
         
         vis_choice = safe_choice("------------------------------------------------------------------------\nWould you like to visualize the filter results? (trajectories/weights/ess/subplot/no): ", ['trajectories', 'weights', 'ess', 'subplot', 'no', 'n'])
         if vis_choice == 'trajectories':
@@ -97,8 +118,8 @@ def run_sequential() -> None:
             visualize_sequential_subplot(particle_history, weight_history, observations)
         export_option = safe_choice("------------------------------------------------------------------------\nWould you like to export the filter results? (yes/no): ", ['yes', 'y', 'no', 'n'])
         if export_option in ['yes', 'y']:
-            sequential_results_json("Nonlinear Tracking Filter", {"n_particles": n_particles, "n_steps": n_steps}, len(particle_history), {"final_estimate": final_estimate, "final_variance": final_variance})
-            sequential_results_csv("Nonlinear Tracking Filter", {"n_particles": n_particles, "n_steps": n_steps}, len(particle_history), {"final_estimate": final_estimate, "final_variance": final_variance})
+            sequential_results_json("Nonlinear Tracking Filter", {"n_particles": n_particles, "n_steps": n_steps}, len(particle_history), {"final_estimate": final_estimate, "final_variance": final_variance}, confidence_intervals)
+            sequential_results_csv("Nonlinear Tracking Filter", {"n_particles": n_particles, "n_steps": n_steps}, len(particle_history), {"final_estimate": final_estimate, "final_variance": final_variance}, confidence_intervals)
     else:
         print("Invalid selection. Please try again.")
 

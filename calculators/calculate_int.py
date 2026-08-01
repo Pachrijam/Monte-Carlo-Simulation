@@ -4,6 +4,7 @@ from utils.exceptions import safe_float, safe_choice, safe_int
 from utils.export_csv import integration_results_csv
 from utils.export_json import integration_results_json
 from visualizations.visualizationInt import visualizeIntEstimates, visualizeIntPercentError, visualizeIntSubplot
+from calculators.calculate_confidence import confidence_interval
 
 def run_int() -> None:
     print("You have selected option 1: Estimate the integral of a function using Monte Carlo integration.")
@@ -34,13 +35,15 @@ def run_int() -> None:
     
     integration_samples = safe_int("Enter the number of samples for the integral estimate: ", min_val=1, max_val=10000000)
         
-    integral_estimate: float = calculate_monte_carlo_integration(integrand, lower_bound, upper_bound, integration_samples)
+    integral_estimate, confidence_intervals = calculate_monte_carlo_integration(integrand, lower_bound, upper_bound, integration_samples)
     print(f"------------------------------------------------------\nEstimated integral of {function_name} from {lower_bound} to {upper_bound}: {integral_estimate}")
+    for ci in confidence_intervals:
+        print(f"{int(ci['confidence_level']*100)}% CI: mean={ci['mean']}, lower={ci['lower']}, upper={ci['upper']}, ME={ci['margin_of_error']}")
     
     export_int_choice = safe_choice("------------------------------------------------------\nWould you like to export the integration results? (yes/no): ", ['yes', 'y', 'no', 'n'])
     if export_int_choice in ['yes', 'y']:
-        integration_results_json(function_name, lower_bound, upper_bound, integration_samples, integral_estimate)
-        integration_results_csv(function_name, lower_bound, upper_bound, integration_samples, integral_estimate)
+        integration_results_json(function_name, lower_bound, upper_bound, integration_samples, integral_estimate, confidence_intervals)
+        integration_results_csv(function_name, lower_bound, upper_bound, integration_samples, integral_estimate, confidence_intervals)
     
     int_vis_choice = safe_choice("------------------------------------------------------\nWould you like a visualization of the integral estimates, error, or a combined subplot? (Enter 'estimates', 'error', 'subplot', or 'no'): ", ['estimates', 'error', 'subplot', 'no', 'n'])
     
@@ -64,5 +67,6 @@ def calculate_monte_carlo_integration(func, a, b, n):
     average_fx = np.mean(fx)
 
     integral_estimate = (b - a) * average_fx
-
-    return integral_estimate
+    per_sample = (b - a) * fx
+    confidence_intervals = [confidence_interval(per_sample, confidence=conf) for conf in (0.90, 0.95, 0.99)]
+    return integral_estimate, confidence_intervals

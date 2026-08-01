@@ -3,6 +3,7 @@ from utils.exceptions import safe_choice, safe_float, safe_optional_float, safe_
 from visualizations.visualizationPDE_SDE import visualize_pde_sde_subplot, visualize_pde_solution, visualize_sde_paths
 from utils.export_csv import pde_sde_results_csv
 from utils.export_json import pde_sde_results_json
+from calculators.calculate_confidence import confidence_interval
 
 def run_pde_sde() -> None:
     print("You have selected option 7: PDE and SDE Solvers.")
@@ -32,8 +33,10 @@ def run_pde_sde() -> None:
             n_paths = safe_int("Enter the number of Monte Carlo paths: ", min_val=1)
         seed = safe_seed_input("Enter random seed or leave blank for random: ")
 
-        estimate, std_error = monte_carlo_pde_solution(initial_condition, x0, time_horizon, n_paths, sigma=sigma, seed=seed)
+        estimate, std_error, confidence_intervals = monte_carlo_pde_solution(initial_condition, x0, time_horizon, n_paths, sigma=sigma, seed=seed)
         print(f"------------------------------------------------------\nPDE Monte Carlo estimate for {function_name} at x={x0}, T={time_horizon}: {estimate:.6f} (SE: {std_error:.6f})")
+        for ci in confidence_intervals:
+            print(f"{int(ci['confidence_level']*100)}% CI: mean={ci['mean']:.6f}, lower={ci['lower']:.6f}, upper={ci['upper']:.6f}, ME={ci['margin_of_error']:.6f}")
         visualization_choice = safe_choice("Would you like to visualize the PDE result? (pde/subplot/no): ", ['pde', 'subplot', 'no', 'n'])
         if visualization_choice == 'pde':
             visualize_pde_solution(initial_condition, x0, time_horizon, n_paths, sigma=sigma, seed=seed)
@@ -41,8 +44,8 @@ def run_pde_sde() -> None:
             visualize_pde_sde_subplot(initial_condition, x0, time_horizon, n_paths, sigma=sigma, seed=seed)
         export_choice = safe_choice("------------------------------------------------------------------------\nWould you like to export the PDE results? (yes/no): ", ['yes', 'y', 'no', 'n'])
         if export_choice in ['yes', 'y']:
-            pde_sde_results_json("PDE", {"function": function_name, "x0": x0, "time_horizon": time_horizon, "n_paths": n_paths, "sigma": sigma}, n_paths, {"estimate": estimate, "std_error": std_error})
-            pde_sde_results_csv("PDE", {"function": function_name, "x0": x0, "time_horizon": time_horizon, "n_paths": n_paths, "sigma": sigma}, n_paths, {"estimate": estimate, "std_error": std_error})
+            pde_sde_results_json("PDE", {"function": function_name, "x0": x0, "time_horizon": time_horizon, "n_paths": n_paths, "sigma": sigma}, n_paths, {"estimate": estimate, "std_error": std_error}, confidence_intervals)
+            pde_sde_results_csv("PDE", {"function": function_name, "x0": x0, "time_horizon": time_horizon, "n_paths": n_paths, "sigma": sigma}, n_paths, {"estimate": estimate, "std_error": std_error}, confidence_intervals)
     
     elif solver_type == 'sde':
         initial_value = safe_float("Enter the initial value X0: ")
@@ -62,8 +65,10 @@ def run_pde_sde() -> None:
             n_paths = safe_int("Enter the number of Monte Carlo paths: ", min_val=1)
         seed = safe_seed_input("Enter random seed or leave blank for random: ")
 
-        estimate, std_error = monte_carlo_sde_expectation(initial_value, drift, diffusion, time_horizon, n_steps, n_paths, seed=seed)
+        estimate, std_error, confidence_intervals = monte_carlo_sde_expectation(initial_value, drift, diffusion, time_horizon, n_steps, n_paths, seed=seed)
         print(f"------------------------------------------------------\nSDE Monte Carlo estimate at T={time_horizon}: {estimate:.6f} (SE: {std_error:.6f})")
+        for ci in confidence_intervals:
+            print(f"{int(ci['confidence_level']*100)}% CI: mean={ci['mean']:.6f}, lower={ci['lower']:.6f}, upper={ci['upper']:.6f}, ME={ci['margin_of_error']:.6f}")
         visualization_choice = safe_choice("Would you like to visualize the SDE result? (sde/subplot/no): ", ['sde', 'subplot', 'no', 'n'])
         if visualization_choice == 'sde':
             visualize_sde_paths(initial_value, drift, diffusion, time_horizon, n_steps, n_paths, seed=seed)
@@ -71,8 +76,8 @@ def run_pde_sde() -> None:
             visualize_pde_sde_subplot(lambda x: np.exp(-(x ** 2)), 0.0, time_horizon, n_paths, sigma=diffusion, seed=seed)
         export_choice = safe_choice("------------------------------------------------------------------------\nWould you like to export the SDE results? (yes/no): ", ['yes', 'y', 'no', 'n'])
         if export_choice in ['yes', 'y']:
-            pde_sde_results_json("SDE", {"initial_value": initial_value, "drift": drift, "diffusion": diffusion, "time_horizon": time_horizon, "n_steps": n_steps, "n_paths": n_paths}, n_paths, {"estimate": estimate, "std_error": std_error})
-            pde_sde_results_csv("SDE", {"initial_value": initial_value, "drift": drift, "diffusion": diffusion, "time_horizon": time_horizon, "n_steps": n_steps, "n_paths": n_paths}, n_paths, {"estimate": estimate, "std_error": std_error})
+            pde_sde_results_json("SDE", {"initial_value": initial_value, "drift": drift, "diffusion": diffusion, "time_horizon": time_horizon, "n_steps": n_steps, "n_paths": n_paths}, n_paths, {"estimate": estimate, "std_error": std_error}, confidence_intervals)
+            pde_sde_results_csv("SDE", {"initial_value": initial_value, "drift": drift, "diffusion": diffusion, "time_horizon": time_horizon, "n_steps": n_steps, "n_paths": n_paths}, n_paths, {"estimate": estimate, "std_error": std_error}, confidence_intervals)
 
 
 def monte_carlo_pde_solution(initial_condition, x0, time_horizon, n_paths, sigma=1.0, seed=None):
@@ -86,7 +91,8 @@ def monte_carlo_pde_solution(initial_condition, x0, time_horizon, n_paths, sigma
     terminal_values = np.asarray(initial_condition(x0 + sigma * noise), dtype=float)
     estimate = float(np.mean(terminal_values))
     std_error = float(np.std(terminal_values, ddof=1) / np.sqrt(n_paths))
-    return estimate, std_error
+    confidence_intervals = [confidence_interval(terminal_values, confidence=conf) for conf in (0.90, 0.95, 0.99)]
+    return estimate, std_error, confidence_intervals
 
 
 def simulate_sde_paths(initial_value, drift, diffusion, time_horizon, n_steps, n_paths, seed=None):
@@ -115,4 +121,5 @@ def monte_carlo_sde_expectation(initial_value, drift, diffusion, time_horizon, n
     terminal_values = paths[:, -1]
     estimate = float(np.mean(terminal_values))
     std_error = float(np.std(terminal_values, ddof=1) / np.sqrt(n_paths))
-    return estimate, std_error
+    confidence_intervals = [confidence_interval(terminal_values, confidence=conf) for conf in (0.90, 0.95, 0.99)]
+    return estimate, std_error, confidence_intervals

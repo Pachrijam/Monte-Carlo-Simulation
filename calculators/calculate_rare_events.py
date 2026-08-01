@@ -3,6 +3,7 @@ import numpy as np
 from utils.export_csv import rare_event_results_csv
 from utils.export_json import rare_event_results_json
 from visualizations.visualizationRareEvents import visualize_rare_event_probability
+from calculators.calculate_confidence import confidence_interval
 
 
 def run_rare() -> None:
@@ -32,17 +33,21 @@ def run_rare() -> None:
     tilt = None
     n_paths_for_export = n_samples
     if choice == '1':
-        prob, se = estimate_tail_probability_naive(threshold, n_samples, dim=dim, seed=seed)
+        prob, se, confidence_intervals = estimate_tail_probability_naive(threshold, n_samples, dim=dim, seed=seed)
         method = "naive"
         print(f"Naive Monte Carlo estimate: {prob} (SE: {se})")
+        for ci in confidence_intervals:
+            print(f"{int(ci['confidence_level']*100)}% CI: mean={ci['mean']}, lower={ci['lower']}, upper={ci['upper']}, ME={ci['margin_of_error']}")
     elif choice == '2':
         try:
             tilt = float(input("Enter tilt (positive shift) for importance sampling [threshold/dim]: ").strip() or str(max(0.0, threshold / max(1, dim))))
         except Exception:
             tilt = max(0.0, threshold / max(1, dim))
-        prob, se = importance_sampling_normal_tail(threshold, n_samples, dim=dim, tilt=tilt, seed=seed)
+        prob, se, confidence_intervals = importance_sampling_normal_tail(threshold, n_samples, dim=dim, tilt=tilt, seed=seed)
         method = "importance"
         print(f"Importance sampling estimate (tilt={tilt}): {prob} (SE: {se})")
+        for ci in confidence_intervals:
+            print(f"{int(ci['confidence_level']*100)}% CI: mean={ci['mean']}, lower={ci['lower']}, upper={ci['upper']}, ME={ci['margin_of_error']}")
     elif choice == '3':
         try:
             n_samples_ce = int(input("Enter samples for CE iterations [20000]: ").strip() or "20000")
@@ -60,11 +65,13 @@ def run_rare() -> None:
             rho = float(input("Enter elite fraction rho (0.0-1.0) [0.01]: ").strip() or "0.01")
         except Exception:
             rho = 0.01
-        prob, se, tilt = cross_entropy_importance_sampling(threshold, n_samples_ce, n_samples_final, dim=dim, n_iters=n_iters, rho=rho, seed=seed)
+        prob, se, tilt, confidence_intervals = cross_entropy_importance_sampling(threshold, n_samples_ce, n_samples_final, dim=dim, n_iters=n_iters, rho=rho, seed=seed)
         method = "cross_entropy"
         n_paths_for_export = n_samples_final
         print(f"Cross-entropy found tilt: {tilt}")
         print(f"CE+Importance sampling estimate: {prob} (SE: {se})")
+        for ci in confidence_intervals:
+            print(f"{int(ci['confidence_level']*100)}% CI: mean={ci['mean']}, lower={ci['lower']}, upper={ci['upper']}, ME={ci['margin_of_error']}")
     else:
         print("Invalid selection")
         return
@@ -72,8 +79,8 @@ def run_rare() -> None:
     while export_choice not in ['yes', 'y', 'no', 'n']:
         export_choice = str(input("Please enter 'yes' or 'no': ")).lower()
     if export_choice in ['yes', 'y']:
-        rare_event_results_json(0.0, 0.0, 1.0, n_paths_for_export, threshold, prob)
-        rare_event_results_csv(0.0, 0.0, 1.0, n_paths_for_export, threshold, prob)
+        rare_event_results_json(0.0, 0.0, 1.0, n_paths_for_export, threshold, prob, confidence_intervals)
+        rare_event_results_csv(0.0, 0.0, 1.0, n_paths_for_export, threshold, prob, confidence_intervals)
     visualization_choice = str(input("Would you like to visualize the rare event probability estimate? (yes/no): ")).lower()
     while visualization_choice not in ['yes', 'y', 'no', 'n']:
         visualization_choice = str(input("Please enter 'yes' or 'no': ")).lower()
@@ -95,7 +102,9 @@ def estimate_tail_probability_naive(threshold, n_samples, dim=1, seed=None):
         std_error = math.sqrt(estimate * (1 - estimate) / (n_samples - 1))
     else:
         std_error = float("nan")
-    return float(estimate), float(std_error)
+    per_sample = (sums > threshold).astype(float)
+    confidence_intervals = [confidence_interval(per_sample, confidence=conf) for conf in (0.90, 0.95, 0.99)]
+    return float(estimate), float(std_error), confidence_intervals
 
 
 def importance_sampling_normal_tail(threshold, n_samples, dim=1, tilt=None, seed=None, rng=None):
@@ -112,8 +121,8 @@ def importance_sampling_normal_tail(threshold, n_samples, dim=1, tilt=None, seed
         weighted[mask] = np.exp(-tilt * exceeded_sums + 0.5 * dim * (tilt ** 2))
     estimate = np.mean(weighted)
     std_error = weighted.std(ddof=1) / math.sqrt(n_samples) if n_samples > 1 else float ("nan")
-    
-    return float(estimate), float(std_error)
+    confidence_intervals = [confidence_interval(weighted, confidence=conf) for conf in (0.90, 0.95, 0.99)]
+    return float(estimate), float(std_error), confidence_intervals
 
 
 def cross_entropy_importance_sampling(threshold, n_samples_ce, n_samples_final, dim=1, n_iters=10, rho=0.01, seed=None):
@@ -126,8 +135,8 @@ def cross_entropy_importance_sampling(threshold, n_samples_ce, n_samples_final, 
         elite_sums = np.partition(sums, n_samples_ce - n_elite)[n_samples_ce - n_elite:]
         tilt = float(elite_sums.mean()/dim)
     
-    prob, se = importance_sampling_normal_tail(threshold, n_samples_final, dim=dim, tilt=tilt, rng=rng)
-    return float(prob), float(se), float(tilt)
+    prob, se, confidence_intervals = importance_sampling_normal_tail(threshold, n_samples_final, dim=dim, tilt=tilt, rng=rng)
+    return float(prob), float(se), float(tilt), confidence_intervals
 
 
 def estimate_rare_event_probability(initial_condition, x0, time_horizon, n_paths, threshold, sigma=1.0, seed=None, method='importance', n_samples_ce=None):
