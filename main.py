@@ -1,7 +1,7 @@
 from menu import get_menu_choice
 from calculators.calculate_int import run_int
 from calculators.calculate_pi import run_pi
-#from calculators.calculate_variance import run_variance
+from calculators.calculuate_variance import run_variance
 from calculators.calculate_mcmc_bayes import run_mcmc
 from calculators.calculate_pde_sde import run_pde_sde
 from calculators.calculate_sequential import run_sequential
@@ -20,8 +20,7 @@ def main() -> None:
         elif sim_choice == 2:
             run_pi()
         elif sim_choice == 3:
-            #run_variance()
-            pass
+            run_variance()
         elif sim_choice == 4:
             run_mcmc()
         elif sim_choice == 5:
