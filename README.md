@@ -4,7 +4,7 @@ A Python practice project exploring Monte Carlo simulation techniques and their 
 
 ## Overview
 
-This repository contains implementations of various Monte Carlo simulations—a statistical method for modeling and analyzing systems with random variables. The project demonstrates the power of using statistical sampling to solve complex problems and estimate quantities that are difficult to calculate analytically.
+This repository contains implementations of various Monte Carlo simulations—a statistical method for modeling and analyzing systems with random variables. The project demonstrates the power of using random sampling to solve complex problems and make predictions about real-world systems.
 
 ## Project Structure
 ```
@@ -46,6 +46,49 @@ Monte-Carlo-Simulation/
 ├── README.md
 └── LICENSE.md
 ```
+
+## Features
+
+This project includes implementations of the following Monte Carlo simulations:
+
+- **Monte Carlo Integration** - Estimate the integral of a function using Monte Carlo integration
+- **Pi Estimation** - Estimate the value of pi using the Monte Carlo method
+- **Variance Reduction Techniques** - Advanced variance reduction techniques for improved simulation efficiency
+- **Markov Chain Monte Carlo (MCMC) Methods** - Bayesian inference using MCMC methods for probabilistic modeling
+- **PDE and SDE Solvers** - Solve partial differential equations and stochastic differential equations
+- **Sequential Monte Carlo Analysis** - Sequential Monte Carlo analysis using particle filters
+- **Rare Event and Tail Risk Simulation** - Estimate the probability of rare events in complex systems
+- **European Option Pricing** - Evaluate financial derivatives using Black-Scholes Monte Carlo simulation
+
+Each simulation includes interactive visualizations to help understand the concepts and results.
+
+## Usage Examples
+
+Run the main application:
+```bash
+python main.py
+```
+
+The program provides an interactive menu where you can select which simulation to run:
+
+```
+--------------------------------<<MENU>>--------------------------------
+SELECT AN OPTION FROM BELOW:
+------------------------------------------------------------------------
+1. Estimate the integral of a function using Monte Carlo integration
+2. Estimate the value of pi using the Monte Carlo method
+3. Variance Reduction Techniques
+4. Markov Chain Monte Carlo (MCMC) Methods
+5. PDE and SDE Solvers
+6. Sequential Monte Carlo Analysis (particle filters)
+7. Rare event and Tail Risk Simulation
+8. European Option Pricing (Black-Scholes Monte Carlo)
+9. Exit
+------------------------------------------------------------------------
+```
+
+Simply enter the number corresponding to the simulation you'd like to run (1-8), configure the simulation parameters when prompted, view the results and visualizations, and optionally export your results to CSV or JSON format. Select option 9 to exit the program.
+
 ## Video Resources
   ### Monte Carlo Pi Estimation
   - "DataMListic": https://youtu.be/lY4rSeX8IL4?si=5dUTObqbJ73dSNQc4
@@ -67,3 +110,7 @@ Monte-Carlo-Simulation/
   - "The Synthetic Mind": https://youtu.be/WjmNedsX1T0?si=uSVoNJQRyHhcCifr
   - "Decision Lab": https://youtu.be/psOYFdx838E?si=dRDkmuvgSk-EPnJg
   - "MIT OpenCourseWare": https://youtu.be/OgO1gpXSUzU?si=iEBuJNuf8liokxNn
+
+## License
+
+This project is licensed under the terms specified in [LICENSE.md](LICENSE.md). See the LICENSE file for more details.
