@@ -35,8 +35,8 @@ Monte-Carlo-Simulation/
 │   └── visualizationVariance.py
 │
 ├── animations/                       # cli animations
-│   ├──
-│   └──
+│   ├── progressbar.py
+│   └── spinner.py
 │
 ├── utils/
 │   ├── exceptions.py                # handles invalid user input and export results
