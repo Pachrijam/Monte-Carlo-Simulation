@@ -1,6 +1,7 @@
 from utils.exceptions import safe_int
+from animations.spinner import Spinner
 
-def get_menu_choice() -> int:
+def get_menu_choice(show_spinner: bool = True) -> int:
     print("--------------------------------<<MENU>>--------------------------------\nSELECT AN OPTION FROM BELOW:\n------------------------------------------------------------------------")
     print("""1. Estimate the integral of a function using Monte Carlo integration
 2. Estimate the value of pi using the Monte Carlo method
@@ -13,5 +14,9 @@ def get_menu_choice() -> int:
 9. Exit
 ------------------------------------------------------------------------""")
     
-    sim_choice = safe_int("Enter the number of the simulation you would like to run (1-9): ", min_val=1, max_val=9)
+    if show_spinner:
+        with Spinner(''):
+            sim_choice = safe_int("   Enter the number of the simulation you would like to run (1-9): ", min_val=1, max_val=9)
+    else:
+        sim_choice = safe_int("   Enter the number of the simulation you would like to run (1-9): ", min_val=1, max_val=9)
     return sim_choice
