@@ -109,6 +109,7 @@ Simply enter the number corresponding to the simulation you'd like to run (1-8),
   - "The Synthetic Mind": https://youtu.be/WjmNedsX1T0?si=uSVoNJQRyHhcCifr
   - "Decision Lab": https://youtu.be/psOYFdx838E?si=dRDkmuvgSk-EPnJg
   - "MIT OpenCourseWare": https://youtu.be/OgO1gpXSUzU?si=iEBuJNuf8liokxNn
+  - "MIT OpenCourseWare": https://ocw.mit.edu/courses/18-655-mathematical-statistics-spring-2016/b36cbb44af02cddb9dc42d92b767c462_MIT18_655S16_LecNote19.pdf
 
 ## License
 
