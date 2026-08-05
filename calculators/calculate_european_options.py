@@ -95,7 +95,8 @@ def monte_carlo_european(
     antithetic: bool = False,
     control_variate: bool = False,
     seed: int | None = None,
-) -> Tuple[float, float, list]:
+    
+ ) -> Tuple[float, float, list]:
     
     rng = np.random.default_rng(seed)
     

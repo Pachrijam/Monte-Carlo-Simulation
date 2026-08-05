@@ -17,20 +17,28 @@ def main() -> None:
             break
         elif sim_choice == 1:
             run_int()
+            print()
         elif sim_choice == 2:
             run_pi()
+            print()
         elif sim_choice == 3:
             run_variance()
+            print()
         elif sim_choice == 4:
             run_mcmc()
+            print()
         elif sim_choice == 5:
             run_pde_sde()
+            print()
         elif sim_choice == 6:
             run_sequential()
+            print()
         elif sim_choice == 7:
             run_rare()
+            print()
         elif sim_choice == 8:
             run_european()
+            print()
         else:
             print("Invalid choice. Please select a number between 1 and 9.")
 

@@ -149,6 +149,7 @@ def metropolis_hastings(log_prob: Callable[[np.ndarray], float], initial: np.nda
         if it >= burn_in and ((it - burn_in) % thin == 0):
             samples[out_i] = current
             out_i += 1
+        
     acc_rate = accepted / total_iters
     return samples, acc_rate
 

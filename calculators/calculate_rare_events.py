@@ -95,7 +95,6 @@ def draw_gaussian_sum(rng,n_samples,dim,mean_per_dim):
 def estimate_tail_probability_naive(threshold, n_samples, dim=1, seed=None):
     rng = np.random.default_rng(seed)
     sums = draw_gaussian_sum(rng, n_samples, dim, 0.0)
-    
     n_exceed = np.count_nonzero(sums > threshold)
     estimate = n_exceed / n_samples
     if n_samples > 1:
@@ -112,13 +111,11 @@ def importance_sampling_normal_tail(threshold, n_samples, dim=1, tilt=None, seed
         tilt = max(0.0, threshold / max(1, dim))
     if rng is None:
         rng = np.random.default_rng(seed)
-    
-    sums = draw_gaussian_sum(rng,n_samples,dim,tilt)
+    sums = draw_gaussian_sum(rng, n_samples, dim, tilt)
     mask = sums > threshold
-    exceeded_sums = sums[mask]
-    weighted = np.zeros(n_samples,dtype=np.float64)
-    if exceeded_sums.size:
-        weighted[mask] = np.exp(-tilt * exceeded_sums + 0.5 * dim * (tilt ** 2))
+    weighted = np.zeros(n_samples, dtype=np.float64)
+    if mask.any():
+        weighted[mask] = np.exp(-tilt * sums[mask] + 0.5 * dim * (tilt ** 2))
     estimate = np.mean(weighted)
     std_error = weighted.std(ddof=1) / math.sqrt(n_samples) if n_samples > 1 else float ("nan")
     confidence_intervals = [confidence_interval(weighted, confidence=conf) for conf in (0.90, 0.95, 0.99)]
@@ -130,10 +127,10 @@ def cross_entropy_importance_sampling(threshold, n_samples_ce, n_samples_final, 
     rng = np.random.default_rng(seed)
     n_elite = max(1,math.ceil(rho * n_samples_ce))
     
-    for _ in range(int(n_iters)):
+    for it in range(int(n_iters)):
         sums = draw_gaussian_sum(rng, n_samples_ce, dim, tilt)
         elite_sums = np.partition(sums, n_samples_ce - n_elite)[n_samples_ce - n_elite:]
-        tilt = float(elite_sums.mean()/dim)
+        tilt = float(elite_sums.mean() / dim)
     
     prob, se, confidence_intervals = importance_sampling_normal_tail(threshold, n_samples_final, dim=dim, tilt=tilt, rng=rng)
     return float(prob), float(se), float(tilt), confidence_intervals
