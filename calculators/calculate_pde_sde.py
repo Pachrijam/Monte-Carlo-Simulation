@@ -37,7 +37,7 @@ def run_pde_sde() -> None:
         print(f"------------------------------------------------------\nPDE Monte Carlo estimate for {function_name} at x={x0}, T={time_horizon}: {estimate:.6f} (SE: {std_error:.6f})")
         for ci in confidence_intervals:
             print(f"{int(ci['confidence_level']*100)}% CI: mean={ci['mean']:.6f}, lower={ci['lower']:.6f}, upper={ci['upper']:.6f}, ME={ci['margin_of_error']:.6f}")
-        visualization_choice = safe_choice("Would you like to visualize the PDE result? (pde/subplot/no): ", ['pde', 'subplot', 'no', 'n'])
+        visualization_choice = safe_choice("------------------------------------------------------------------------\nWould you like to visualize the PDE result? (pde/subplot/no): ", ['pde', 'subplot', 'no', 'n'])
         if visualization_choice == 'pde':
             visualize_pde_solution(initial_condition, x0, time_horizon, n_paths, sigma=sigma, seed=seed)
         elif visualization_choice == 'subplot':
@@ -69,7 +69,7 @@ def run_pde_sde() -> None:
         print(f"------------------------------------------------------\nSDE Monte Carlo estimate at T={time_horizon}: {estimate:.6f} (SE: {std_error:.6f})")
         for ci in confidence_intervals:
             print(f"{int(ci['confidence_level']*100)}% CI: mean={ci['mean']:.6f}, lower={ci['lower']:.6f}, upper={ci['upper']:.6f}, ME={ci['margin_of_error']:.6f}")
-        visualization_choice = safe_choice("Would you like to visualize the SDE result? (sde/subplot/no): ", ['sde', 'subplot', 'no', 'n'])
+        visualization_choice = safe_choice("------------------------------------------------------------------------\nWould you like to visualize the SDE result? (sde/subplot/no): ", ['sde', 'subplot', 'no', 'n'])
         if visualization_choice == 'sde':
             visualize_sde_paths(initial_value, drift, diffusion, time_horizon, n_steps, n_paths, seed=seed)
         elif visualization_choice == 'subplot':

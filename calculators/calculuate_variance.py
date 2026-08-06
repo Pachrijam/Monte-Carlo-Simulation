@@ -5,6 +5,7 @@ from utils.export_csv import variance_results_csv
 from utils.export_json import variance_results_json
 
 def run_variance():
+    print("You have selected option 3: Calculate Variance.")
     n = safe_int("Enter number of samples: ", min_val=1)
     dist = safe_choice("Choose distribution (normal/uniform/exponential): ", ["normal", "uniform", "exponential"])
     seed = safe_seed_input("Optional seed (press Enter to skip): ")
@@ -30,11 +31,10 @@ def run_variance():
         plot_variance(samples)
     except Exception:
         pass
-    export_choice = safe_choice("Export results? (none/csv/json/both): ", ["none", "csv", "json", "both"])
+    export_choice = safe_choice("Would you like to export the variance results? (yes/no): ", ["yes", "no"])
     filename = input("Optional filename (without extension, press Enter to auto): ").strip()
     method_name = "Monte Carlo Variance"
-    if export_choice in ("csv", "both"):
+    if export_choice in ("yes", "y"):
         variance_results_csv(method_name, params, n, sample_var, filename or None)
-    if export_choice in ("json", "both"):
         variance_results_json(method_name, params, n, sample_var, filename or None)
     return {"n": n, "distribution": dist, "parameters": params, "variance_estimate": sample_var}

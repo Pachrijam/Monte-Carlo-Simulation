@@ -11,9 +11,7 @@ def run_rare() -> None:
     print("1. Naive Monte Carlo tail probability")
     print("2. Importance sampling with fixed tilt")
     print("3. Cross-entropy to find tilt + importance sampling")
-    choice = input("Enter choice (1-3) or 'b' to go back: ").strip().lower()
-    if choice == 'b':
-        return
+    choice = input("------------------------------------------------------------------------\nEnter choice (1-3): ").strip().lower()
     try:
         threshold = float(input("Enter threshold for the sum of standard normals: ").strip())
     except Exception:
@@ -81,7 +79,7 @@ def run_rare() -> None:
     if export_choice in ['yes', 'y']:
         rare_event_results_json(0.0, 0.0, 1.0, n_paths_for_export, threshold, prob, confidence_intervals)
         rare_event_results_csv(0.0, 0.0, 1.0, n_paths_for_export, threshold, prob, confidence_intervals)
-    visualization_choice = str(input("Would you like to visualize the rare event probability estimate? (yes/no): ")).lower()
+    visualization_choice = str(input("------------------------------------------------------------------------\nWould you like to visualize the rare event probability estimate? (yes/no): ")).lower()
     while visualization_choice not in ['yes', 'y', 'no', 'n']:
         visualization_choice = str(input("Please enter 'yes' or 'no': ")).lower()
     if visualization_choice in ['yes', 'y']:

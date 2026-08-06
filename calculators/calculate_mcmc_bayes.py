@@ -11,9 +11,8 @@ def run_mcmc() -> None:
     print("You have selected option 6: Markov Chain Monte Carlo (MCMC) Methods.")
     print("------------------------------------------------------------------------\nSelect an MCMC method to run:")
     print("""1. Metropolis-Hastings
-2. Gibbs Sampling
-3. Exit""")
-    mcmc_choice = safe_int("Enter the number of the MCMC method you would like to run (1-3): ", min_val=1, max_val=3)
+2. Gibbs Sampling""")
+    mcmc_choice = safe_int("Enter the number of the MCMC method you would like to run (1,2): ", min_val=1, max_val=2)
     if mcmc_choice == 1:
         print("------------------------------------------------------------------------\nYou have selected Metropolis-Hastings.")
         def log_normal(x: np.ndarray) -> float:
@@ -124,9 +123,6 @@ def run_mcmc() -> None:
                 })
             mcmc_results_json("Gibbs Sampling", parameters, num_samples, posterior_summary_data)
             mcmc_results_csv("Gibbs Sampling", parameters, num_samples, posterior_summary_data)
-    elif mcmc_choice == 3:
-        print("------------------------------------------------------------------------\nExiting MCMC methods.")
-
 
 def metropolis_hastings(log_prob: Callable[[np.ndarray], float], initial: np.ndarray, n_samples: int, proposal_std: float = 1.0, burn_in: int = 0, thin: int = 1, rng: Optional[np.random.Generator] = None) -> Tuple[np.ndarray, float]:
     if rng is None:

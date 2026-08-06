@@ -29,7 +29,7 @@ def safe_choice(prompt: str, valid_options: list) -> str:
         try:
             value = input(prompt).strip().lower()
             if value not in valid_options:
-                raise ValueError(f"Please enter one of: {', '.join(valid_options)}")
+                raise ValueError(f"Please enter one of: ({', '.join(valid_options)})")
             return value
         except ValueError as e:
             print(f"Invalid input: {e}")
