@@ -1,7 +1,10 @@
+from animations.colonblinker import blinking_input
+
+
 def safe_int(prompt: str, min_val: int = None, max_val: int = None) -> int:
     while True:
         try:
-            value = int(input(prompt))
+            value = int(blinking_input(prompt))
             if min_val is not None and value < min_val:
                 raise ValueError(f"Value must be at least {min_val}")
             if max_val is not None and value > max_val:
@@ -14,7 +17,7 @@ def safe_int(prompt: str, min_val: int = None, max_val: int = None) -> int:
 def safe_float(prompt: str, min_val: float = None, max_val: float = None) -> float:
     while True:
         try:
-            value = float(input(prompt))
+            value = float(blinking_input(prompt))
             if min_val is not None and value < min_val:
                 raise ValueError(f"Value must be at least {min_val}")
             if max_val is not None and value > max_val:
@@ -27,7 +30,7 @@ def safe_float(prompt: str, min_val: float = None, max_val: float = None) -> flo
 def safe_choice(prompt: str, valid_options: list) -> str:
     while True:
         try:
-            value = input(prompt).strip().lower()
+            value = blinking_input(prompt).strip().lower()
             if value not in valid_options:
                 raise ValueError(f"Please enter one of: ({', '.join(valid_options)})")
             return value
@@ -38,7 +41,7 @@ def safe_choice(prompt: str, valid_options: list) -> str:
 def safe_optional_int(prompt: str, default: int = None) -> int:
     while True:
         try:
-            value_str = input(prompt).strip()
+            value_str = blinking_input(prompt).strip()
             if not value_str:
                 if default is not None:
                     return default
@@ -52,7 +55,7 @@ def safe_optional_int(prompt: str, default: int = None) -> int:
 def safe_optional_float(prompt: str, default: float = None) -> float:
     while True:
         try:
-            value_str = input(prompt).strip()
+            value_str = blinking_input(prompt).strip()
             if not value_str:
                 if default is not None:
                     return default
@@ -66,7 +69,7 @@ def safe_optional_float(prompt: str, default: float = None) -> float:
 def safe_seed_input(prompt: str) -> int:
     while True:
         try:
-            value_str = input(prompt).strip()
+            value_str = blinking_input(prompt).strip()
             if not value_str:
                 return None
             if not value_str.isdigit():
