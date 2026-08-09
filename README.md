@@ -35,6 +35,7 @@ Monte-Carlo-Simulation/
 │   └── visualizationVariance.py
 │
 ├── animations/                       # cli animations
+│   ├── colonblinker.py
 │   └── spinner.py
 │   
 ├── utils/

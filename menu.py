@@ -17,6 +17,4 @@ def get_menu_choice(show_spinner: bool = True) -> int:
     if show_spinner:
         with Spinner(''):
             sim_choice = safe_int("   Enter the number of the simulation you would like to run (1-9): ", min_val=1, max_val=9)
-    else:
-        sim_choice = safe_int("   Enter the number of the simulation you would like to run (1-9): ", min_val=1, max_val=9)
     return sim_choice
