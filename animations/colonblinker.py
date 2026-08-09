@@ -36,6 +36,7 @@ class ColonBlinker:
         if not self._running:
             return
         self._running = False
+        self._update_colon(':')
         self._thread.join()
         self._thread = None
 
